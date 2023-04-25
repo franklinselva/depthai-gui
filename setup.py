@@ -1,18 +1,18 @@
 import io
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     required = f.readlines()
 
 setup(
     name="depthai-gui",
     version="2.0.6",
-    packages=['.', *find_packages()],
+    packages=[".", *find_packages()],
     entry_points={
-        'console_scripts': [
-            'depthai-gui = pipeline_editor:main',
-            'depthai-gui-demo = demo:main'
+        "console_scripts": [
+            "depthai-gui = pipeline_editor:main",
+            "depthai-gui-demo = demo:main",
         ]
     },
     author="Luxonis",
@@ -22,14 +22,14 @@ setup(
     author_email="support@luxonis.com",
     description="DepthAI Pipeline Visualizer GUI",
     keywords="depthai gui ide pipeline visualizer node",
-    url="https://github.com/luxonis/depthai-gui",   # project home page
+    url="https://github.com/luxonis/depthai-gui",  # project home page
     project_urls={
         "Bug Tracker": "https://github.com/luxonis/depthai-gui/issues",
         "Documentation": "https://docs.luxonis.com/projects/gui/en/latest/",
         "Source Code": "https://github.com/luxonis/depthai-gui",
     },
     classifiers=[
-        'License :: OSI Approved :: Apache Software License',
+        "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",

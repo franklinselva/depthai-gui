@@ -2,11 +2,9 @@
 import json
 from collections import defaultdict
 
-from NodeGraphQt.constants import (NODE_PROP,
-                         NODE_PROP_QLABEL,
-                         NODE_PROP_QLINEEDIT,
-                         NODE_PROP_QCHECKBOX,
-                         NODE_PROP_COLORPICKER)
+from NodeGraphQt.constants import (NODE_PROP, NODE_PROP_COLORPICKER,
+                                   NODE_PROP_QCHECKBOX, NODE_PROP_QLABEL,
+                                   NODE_PROP_QLINEEDIT)
 from NodeGraphQt.errors import NodePropertyError
 
 
@@ -17,18 +15,19 @@ class PortModel(object):
 
     def __init__(self, node):
         self.node = node
-        self.type_ = ''
-        self.name = 'port'
+        self.type_ = ""
+        self.name = "port"
         self.display_name = True
         self.multi_connection = False
         self.visible = True
         self.locked = False
         self.connected_ports = defaultdict(list)
-        self.data_type = 'NoneType'
+        self.data_type = "NoneType"
 
     def __repr__(self):
-        return '<{}(\'{}\') object at {}>'.format(
-            self.__class__.__name__, self.name, hex(id(self)))
+        return "<{}('{}') object at {}>".format(
+            self.__class__.__name__, self.name, hex(id(self))
+        )
 
     @property
     def to_dict(self):
@@ -48,8 +47,8 @@ class PortModel(object):
                 }
         """
         props = self.__dict__.copy()
-        props.pop('node')
-        props['connected_ports'] = dict(props.pop('connected_ports'))
+        props.pop("node")
+        props["connected_ports"] = dict(props.pop("connected_ports"))
         return props
 
 
@@ -62,7 +61,7 @@ class NodeModel(object):
         self.type_ = None
         self.id = hex(id(self))
         self.icon = None
-        self.name = 'node'
+        self.name = "node"
         self.color = (13, 18, 23, 255)
         self.border_color = (74, 84, 85, 255)
         self.text_color = (255, 255, 255, 180)
@@ -87,29 +86,38 @@ class NodeModel(object):
         # temp store the property widget types.
         # (deleted when node is added to the graph)
         self._TEMP_property_widget_types = {
-            'type_': NODE_PROP_QLABEL,
-            'id': NODE_PROP_QLABEL,
-            'icon': NODE_PROP,
-            'name': NODE_PROP_QLINEEDIT,
-            'color': NODE_PROP_COLORPICKER,
-            'border_color': NODE_PROP,
-            'text_color': NODE_PROP_COLORPICKER,
-            'disabled': NODE_PROP_QCHECKBOX,
-            'selected': NODE_PROP,
-            'width': NODE_PROP,
-            'height': NODE_PROP,
-            'pos': NODE_PROP,
-            'inputs': NODE_PROP,
-            'outputs': NODE_PROP,
+            "type_": NODE_PROP_QLABEL,
+            "id": NODE_PROP_QLABEL,
+            "icon": NODE_PROP,
+            "name": NODE_PROP_QLINEEDIT,
+            "color": NODE_PROP_COLORPICKER,
+            "border_color": NODE_PROP,
+            "text_color": NODE_PROP_COLORPICKER,
+            "disabled": NODE_PROP_QCHECKBOX,
+            "selected": NODE_PROP,
+            "width": NODE_PROP,
+            "height": NODE_PROP,
+            "pos": NODE_PROP,
+            "inputs": NODE_PROP,
+            "outputs": NODE_PROP,
         }
 
     def __repr__(self):
-        return '<{}(\'{}\') object at {}>'.format(
-            self.__class__.__name__, self.name, self.id)
+        return "<{}('{}') object at {}>".format(
+            self.__class__.__name__, self.name, self.id
+        )
 
-    def add_property(self, name, value, items=None, range=None,
-                     widget_type=NODE_PROP, tab='Properties',
-                     ext=None, funcs=None):
+    def add_property(
+        self,
+        name,
+        value,
+        items=None,
+        range=None,
+        widget_type=NODE_PROP,
+        tab="Properties",
+        ext=None,
+        funcs=None,
+    ):
         """
         add custom property.
 
@@ -123,41 +131,36 @@ class NodeModel(object):
             ext (str) file ext for NODE_PROP_FILE
             funcs (list) functions for NODE_PROP_BUTTON
         """
-        tab = tab or 'Properties'
+        tab = tab or "Properties"
 
         if name in self.properties.keys():
-            raise NodePropertyError(
-                '"{}" reserved for default property.'.format(name))
+            raise NodePropertyError('"{}" reserved for default property.'.format(name))
         if name in self._custom_prop.keys():
-            raise NodePropertyError(
-                '"{}" property already exists.'.format(name))
+            raise NodePropertyError('"{}" property already exists.'.format(name))
 
         self._custom_prop[name] = value
 
         if self._graph_model is None:
             self._TEMP_property_widget_types[name] = widget_type
-            self._TEMP_property_attrs[name] = {'tab': tab}
+            self._TEMP_property_attrs[name] = {"tab": tab}
             if items:
-                self._TEMP_property_attrs[name]['items'] = items
+                self._TEMP_property_attrs[name]["items"] = items
             if range:
-                self._TEMP_property_attrs[name]['range'] = range
+                self._TEMP_property_attrs[name]["range"] = range
             if ext:
-                self._TEMP_property_attrs[name]['ext'] = ext
+                self._TEMP_property_attrs[name]["ext"] = ext
             if funcs:
-                self._TEMP_property_attrs[name]['funcs'] = funcs
+                self._TEMP_property_attrs[name]["funcs"] = funcs
         else:
-            attrs = {self.type_: {name: {
-                'widget_type': widget_type,
-                'tab': tab
-            }}}
+            attrs = {self.type_: {name: {"widget_type": widget_type, "tab": tab}}}
             if items:
-                attrs[self.type_][name]['items'] = items
+                attrs[self.type_][name]["items"] = items
             if range:
-                attrs[self.type_][name]['range'] = range
+                attrs[self.type_][name]["range"] = range
             if ext:
-                attrs[self.type_][name]['ext'] = ext
+                attrs[self.type_][name]["ext"] = ext
             if funcs:
-                attrs[self.type_][name]['funcs'] = funcs
+                attrs[self.type_][name]["funcs"] = funcs
             self._graph_model.set_node_common_properties(attrs)
 
     def set_property(self, name, value):
@@ -177,16 +180,16 @@ class NodeModel(object):
         model = self._graph_model
         if model is None:
             return self._TEMP_property_widget_types.get(name)
-        return model.get_node_common_properties(self.type_)[name]['widget_type']
+        return model.get_node_common_properties(self.type_)[name]["widget_type"]
 
     def get_tab_name(self, name):
         model = self._graph_model
         if model is None:
             attrs = self._TEMP_property_attrs.get(name)
             if attrs:
-                return attrs[name].get('tab')
+                return attrs[name].get("tab")
             return
-        return model.get_node_common_properties(self.type_)[name]['tab']
+        return model.get_node_common_properties(self.type_)[name]["tab"]
 
     @property
     def properties(self):
@@ -197,10 +200,12 @@ class NodeModel(object):
             dict: default node properties.
         """
         props = self.__dict__.copy()
-        exclude = ['_custom_prop',
-                   '_graph_model',
-                   '_TEMP_property_attrs',
-                   '_TEMP_property_widget_types']
+        exclude = [
+            "_custom_prop",
+            "_graph_model",
+            "_TEMP_property_attrs",
+            "_TEMP_property_widget_types",
+        ]
         [props.pop(i) for i in exclude if i in props.keys()]
         return props
 
@@ -246,44 +251,48 @@ class NodeModel(object):
                 }
         """
         node_dict = self.__dict__.copy()
-        node_id = node_dict.pop('id')
+        node_id = node_dict.pop("id")
 
         inputs = {}
         outputs = {}
         input_ports = []
         output_ports = []
-        for name, model in node_dict.pop('inputs').items():
+        for name, model in node_dict.pop("inputs").items():
             if self.dynamic_port:
-                input_ports.append({
-                    'name': name,
-                    'multi_connection': model.multi_connection,
-                    'display_name': model.display_name,
-                    'data_type': model.data_type
-                })
-            connected_ports = model.to_dict['connected_ports']
+                input_ports.append(
+                    {
+                        "name": name,
+                        "multi_connection": model.multi_connection,
+                        "display_name": model.display_name,
+                        "data_type": model.data_type,
+                    }
+                )
+            connected_ports = model.to_dict["connected_ports"]
             if connected_ports:
                 inputs[name] = connected_ports
-        for name, model in node_dict.pop('outputs').items():
+        for name, model in node_dict.pop("outputs").items():
             if self.dynamic_port:
-                output_ports.append({
-                    'name': name,
-                    'multi_connection': model.multi_connection,
-                    'display_name': model.display_name,
-                    'data_type': model.data_type
-                })
-            connected_ports = model.to_dict['connected_ports']
+                output_ports.append(
+                    {
+                        "name": name,
+                        "multi_connection": model.multi_connection,
+                        "display_name": model.display_name,
+                        "data_type": model.data_type,
+                    }
+                )
+            connected_ports = model.to_dict["connected_ports"]
             if connected_ports:
                 outputs[name] = connected_ports
         if inputs:
-            node_dict['inputs'] = inputs
+            node_dict["inputs"] = inputs
         if outputs:
-            node_dict['outputs'] = outputs
+            node_dict["outputs"] = outputs
 
         if self.dynamic_port:
-            node_dict['input_ports'] = input_ports
-            node_dict['output_ports'] = output_ports
+            node_dict["input_ports"] = input_ports
+            node_dict["output_ports"] = output_ports
 
-        custom_props = node_dict.pop('_custom_prop', {})
+        custom_props = node_dict.pop("_custom_prop", {})
 
         if custom_props:
             # exclude the data which can not be serialized (like numpy array)
@@ -298,11 +307,13 @@ class NodeModel(object):
 
             [custom_props.pop(k) for k in to_remove]
 
-            node_dict['custom'] = custom_props
+            node_dict["custom"] = custom_props
 
-        exclude = ['_graph_model',
-                   '_TEMP_property_attrs',
-                   '_TEMP_property_widget_types']
+        exclude = [
+            "_graph_model",
+            "_TEMP_property_attrs",
+            "_TEMP_property_widget_types",
+        ]
         [node_dict.pop(i) for i in exclude if i in node_dict.keys()]
 
         return {node_id: node_dict}
@@ -328,7 +339,7 @@ class NodeGraphModel(object):
         self.__common_node_props = {}
 
         self.nodes = {}
-        self.session = ''
+        self.session = ""
         self.acyclic = True
         self.pipe_collision = False
 
@@ -395,18 +406,18 @@ class NodeGraphModel(object):
         return self.__common_node_props.get(node_type)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     p = PortModel(None)
     # print(p.to_dict)
 
     n = NodeModel()
     n.inputs[p.name] = p
-    n.add_property('foo', 'bar')
+    n.add_property("foo", "bar")
 
-    print('-'*100)
-    print('property keys\n')
+    print("-" * 100)
+    print("property keys\n")
     print(list(n.properties.keys()))
-    print('-'*100)
-    print('to_dict\n')
+    print("-" * 100)
+    print("to_dict\n")
     for k, v in n.to_dict[n.id].items():
         print(k, v)

@@ -1,15 +1,12 @@
 #!/usr/bin/python
-from Qt import QtGui, QtCore, QtWidgets
+from Qt import QtCore, QtGui, QtWidgets
 
-from NodeGraphQt.constants import (VIEWER_BG_COLOR,
-                         VIEWER_GRID_SIZE,
-                         VIEWER_GRID_COLOR,
-                         VIEWER_GRID_DOTS,
-                         VIEWER_GRID_LINES)
+from NodeGraphQt.constants import (VIEWER_BG_COLOR, VIEWER_GRID_COLOR,
+                                   VIEWER_GRID_DOTS, VIEWER_GRID_LINES,
+                                   VIEWER_GRID_SIZE)
 
 
 class NodeScene(QtWidgets.QGraphicsScene):
-
     def __init__(self, parent=None):
         super(NodeScene, self).__init__(parent)
         self.background_color = VIEWER_BG_COLOR
@@ -19,17 +16,16 @@ class NodeScene(QtWidgets.QGraphicsScene):
 
     def __repr__(self):
         cls_name = str(self.__class__.__name__)
-        return '<{}("{}") object at {}>'.format(
-            cls_name, self.viewer(), hex(id(self)))
+        return '<{}("{}") object at {}>'.format(cls_name, self.viewer(), hex(id(self)))
 
     def _draw_text(self, painter, pen):
         font = QtGui.QFont()
         font.setPixelSize(48)
         painter.setFont(font)
         parent = self.viewer()
-        pos = QtCore.QPoint(20, parent.height()-20)
+        pos = QtCore.QPoint(20, parent.height() - 20)
         painter.setPen(pen)
-        painter.drawText(parent.mapToScene(pos), 'Not Editable')
+        painter.drawText(parent.mapToScene(pos), "Not Editable")
 
     def _draw_grid(self, painter, rect, pen, grid_size):
         """
@@ -50,13 +46,17 @@ class NodeScene(QtWidgets.QGraphicsScene):
         first_top = top - (top % grid_size)
 
         lines = []
-        lines.extend([
-            QtCore.QLineF(x, top, x, bottom)
-            for x in range(first_left, right, grid_size)
-        ])
-        lines.extend([
-            QtCore.QLineF(left, y, right, y)
-            for y in range(first_top, bottom, grid_size)]
+        lines.extend(
+            [
+                QtCore.QLineF(x, top, x, bottom)
+                for x in range(first_left, right, grid_size)
+            ]
+        )
+        lines.extend(
+            [
+                QtCore.QLineF(left, y, right, y)
+                for y in range(first_top, bottom, grid_size)
+            ]
         )
 
         painter.setPen(pen)
@@ -87,9 +87,11 @@ class NodeScene(QtWidgets.QGraphicsScene):
         pen.setWidth(grid_size / 10)
         painter.setPen(pen)
 
-        [painter.drawPoint(int(x), int(y))
-         for x in range(first_left, right, grid_size)
-         for y in range(first_top, bottom, grid_size)]
+        [
+            painter.drawPoint(int(x), int(y))
+            for x in range(first_left, right, grid_size)
+            for y in range(first_top, bottom, grid_size)
+        ]
 
     def drawBackground(self, painter, rect):
         super(NodeScene, self).drawBackground(painter, rect)
@@ -125,11 +127,13 @@ class NodeScene(QtWidgets.QGraphicsScene):
         if self.viewer():
             self.viewer().sceneMousePressEvent(event)
         super(NodeScene, self).mousePressEvent(event)
-        keep_selection = any([
-            event.button() == QtCore.Qt.MiddleButton,
-            event.button() == QtCore.Qt.RightButton,
-            event.modifiers() == QtCore.Qt.AltModifier
-        ])
+        keep_selection = any(
+            [
+                event.button() == QtCore.Qt.MiddleButton,
+                event.button() == QtCore.Qt.RightButton,
+                event.modifiers() == QtCore.Qt.AltModifier,
+            ]
+        )
         if keep_selection:
             for node in selected_nodes:
                 node.setSelected(True)

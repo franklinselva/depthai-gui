@@ -2,7 +2,9 @@ import subprocess
 import sys
 
 # https://stackoverflow.com/a/58026969/5494277
-in_venv = getattr(sys, "real_prefix", getattr(sys, "base_prefix", sys.prefix)) != sys.prefix
+in_venv = (
+    getattr(sys, "real_prefix", getattr(sys, "base_prefix", sys.prefix)) != sys.prefix
+)
 pip_call = [sys.executable, "-m", "pip"]
 pip_install = pip_call + ["install"]
 

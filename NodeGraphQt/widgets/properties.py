@@ -1,25 +1,17 @@
 #!/usr/bin/python
 from collections import defaultdict
 
-from Qt import QtWidgets, QtCore, QtGui
+from Qt import QtCore, QtGui, QtWidgets
 
+from NodeGraphQt.constants import (NODE_PROP_BUTTON, NODE_PROP_COLORPICKER,
+                                   NODE_PROP_FILE, NODE_PROP_FILE_SAVE,
+                                   NODE_PROP_FLOAT, NODE_PROP_INT,
+                                   NODE_PROP_QCHECKBOX, NODE_PROP_QCOMBO,
+                                   NODE_PROP_QLABEL, NODE_PROP_QLINEEDIT,
+                                   NODE_PROP_QSPINBOX, NODE_PROP_QTEXTEDIT,
+                                   NODE_PROP_SLIDER, NODE_PROP_VECTOR2,
+                                   NODE_PROP_VECTOR3, NODE_PROP_VECTOR4)
 from NodeGraphQt.widgets.dialogs import FileDialog
-from NodeGraphQt.constants import (NODE_PROP_QLABEL,
-                         NODE_PROP_QLINEEDIT,
-                         NODE_PROP_QTEXTEDIT,
-                         NODE_PROP_QCOMBO,
-                         NODE_PROP_QCHECKBOX,
-                         NODE_PROP_QSPINBOX,
-                         NODE_PROP_COLORPICKER,
-                         NODE_PROP_SLIDER,
-                         NODE_PROP_FILE,
-                         NODE_PROP_FILE_SAVE,
-                         NODE_PROP_VECTOR2,
-                         NODE_PROP_VECTOR3,
-                         NODE_PROP_VECTOR4,
-                         NODE_PROP_FLOAT,
-                         NODE_PROP_INT,
-                         NODE_PROP_BUTTON)
 
 
 class BaseProperty(QtWidgets.QWidget):
@@ -34,7 +26,6 @@ class BaseProperty(QtWidgets.QWidget):
 
 
 class PropColorPicker(BaseProperty):
-
     def __init__(self, parent=None):
         super(PropColorPicker, self).__init__(parent)
         self._color = (0, 0, 0)
@@ -67,12 +58,14 @@ class PropColorPicker(BaseProperty):
 
     def _update_color(self):
         c = [int(max(min(i, 255), 0)) for i in self._color]
-        hex_color = '#{0:02x}{1:02x}{2:02x}'.format(*c)
+        hex_color = "#{0:02x}{1:02x}{2:02x}".format(*c)
         self._button.setStyleSheet(
-            '''QPushButton {{background-color: rgba({0}, {1}, {2}, 255);}}
-               QPushButton::hover {{background-color: rgba({0}, {1}, {2}, 200);}}'''.format(*c))
-        self._button.setToolTip('rgb: {}\nhex: {}'
-                                .format(self._color[:3], hex_color))
+            """QPushButton {{background-color: rgba({0}, {1}, {2}, 255);}}
+               QPushButton::hover {{background-color: rgba({0}, {1}, {2}, 200);}}""".format(
+                *c
+            )
+        )
+        self._button.setToolTip("rgb: {}\nhex: {}".format(self._color[:3], hex_color))
 
     def get_value(self):
         return self._color[:3]
@@ -86,7 +79,6 @@ class PropColorPicker(BaseProperty):
 
 
 class PropSlider(BaseProperty):
-
     def __init__(self, parent=None):
         super(PropSlider, self).__init__(parent)
         self._block = False
@@ -97,8 +89,9 @@ class PropSlider(BaseProperty):
     def _init(self):
         self._slider.setOrientation(QtCore.Qt.Horizontal)
         self._slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
-        self._slider.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                   QtWidgets.QSizePolicy.Preferred)
+        self._slider.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         self._spnbox.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -187,7 +180,7 @@ class PropTextEdit(QtWidgets.QTextEdit):
 
     def __init__(self, parent=None):
         super(PropTextEdit, self).__init__(parent)
-        self.__prev_text = ''
+        self.__prev_text = ""
 
     def focusInEvent(self, event):
         super(PropTextEdit, self).focusInEvent(event)
@@ -197,7 +190,7 @@ class PropTextEdit(QtWidgets.QTextEdit):
         super(PropTextEdit, self).focusOutEvent(event)
         if self.__prev_text != self.toPlainText():
             self.value_changed.emit(self.toolTip(), self.toPlainText())
-        self.__prev_text = ''
+        self.__prev_text = ""
 
     def get_value(self):
         return self.toPlainText()
@@ -282,7 +275,6 @@ class PropSpinBox(QtWidgets.QSpinBox):
 
 
 class PropFilePath(BaseProperty):
-
     def __init__(self, parent=None):
         super(PropFilePath, self).__init__(parent)
         self._ledit = QtWidgets.QLineEdit()
@@ -313,9 +305,9 @@ class PropFilePath(BaseProperty):
         self._file_dir = dir
 
     def _on_select_file(self):
-        file_path = FileDialog.getOpenFileName(self,
-                                               file_dir=self._file_dir,
-                                               ext_filter=self._ext)
+        file_path = FileDialog.getOpenFileName(
+            self, file_dir=self._file_dir, ext_filter=self._ext
+        )
         file = file_path[0] or None
         if file:
             self.set_value(file)
@@ -336,11 +328,10 @@ class PropFilePath(BaseProperty):
 
 
 class PropFileSavePath(PropFilePath):
-
     def _on_select_file(self):
-        file_path = FileDialog.getSaveFileName(self,
-                                               file_dir=self._file_dir,
-                                               ext_filter=self._ext)
+        file_path = FileDialog.getSaveFileName(
+            self, file_dir=self._file_dir, ext_filter=self._ext
+        )
         file = file_path[0] or None
         if file:
             self.set_value(file)
@@ -393,7 +384,7 @@ class _ValueMenu(QtWidgets.QMenu):
         if dt is int:
             new_steps = []
             for step in self.steps:
-                if '.' not in str(step):
+                if "." not in str(step):
                     new_steps.append(step)
             self.set_steps(new_steps)
         elif dt is float:
@@ -408,7 +399,7 @@ class _ValueEdit(QtWidgets.QLineEdit):
         super(_ValueEdit, self).__init__(parent)
         self.mid_state = False
         self._data_type = float
-        self.setText('0')
+        self.setText("0")
 
         self.pre_x = None
         self.pre_val = None
@@ -481,8 +472,8 @@ class _ValueEdit(QtWidgets.QLineEdit):
         return value
 
     def value(self):
-        if self.text().startswith('.'):
-            text = '0' + self.text()
+        if self.text().startswith("."):
+            text = "0" + self.text()
             self.setText(text)
         return self._convert_text(self.text())
 
@@ -492,13 +483,13 @@ class _ValueEdit(QtWidgets.QLineEdit):
 
 
 class _Slider(QtWidgets.QSlider):
-
     def __init__(self, parent=None):
         super(_Slider, self).__init__(parent)
         self.setOrientation(QtCore.Qt.Horizontal)
         self.setTickPosition(QtWidgets.QSlider.TicksBelow)
-        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                           QtWidgets.QSizePolicy.Preferred)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
 
     def _update_value(self, x):
         value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
@@ -588,21 +579,19 @@ class _ValueSliderEdit(QtWidgets.QWidget):
 
 
 class _DoubleSpinBox(QtWidgets.QDoubleSpinBox):
-
     def __init__(self, parent=None):
         super(_DoubleSpinBox, self).__init__(parent)
         self.setButtonSymbols(self.NoButtons)
         self.setRange(-9999999999999999.0, 9999999999999999.0)
         self.setDecimals(16)
         self.setValue(0)
-        self.setStyleSheet('QDoubleSpinBox{ border:1px solid }')
+        self.setStyleSheet("QDoubleSpinBox{ border:1px solid }")
 
     def textFromValue(self, value):
         return str(value)
 
 
 class PropVector(BaseProperty):
-
     def __init__(self, parent=None, dim=3):
         super(PropVector, self).__init__(parent)
         self._value = []
@@ -654,19 +643,16 @@ class PropVector(BaseProperty):
 
 
 class PropVector2(PropVector):
-
     def __init__(self, parent=None):
         super(PropVector2, self).__init__(parent, 2)
 
 
 class PropVector3(PropVector):
-
     def __init__(self, parent=None):
         super(PropVector3, self).__init__(parent, 3)
 
 
 class PropVector4(PropVector):
-
     def __init__(self, parent=None):
         super(PropVector4, self).__init__(parent, 4)
 
@@ -692,7 +678,6 @@ class PropFloat(_ValueSliderEdit):
 
 
 class PropInt(PropFloat):
-
     def __init__(self, parent=None):
         super(PropInt, self).__init__(parent)
         self.set_data_type(int)
@@ -732,7 +717,7 @@ WIDGET_MAP = {
     NODE_PROP_VECTOR4: PropVector4,
     NODE_PROP_FLOAT: PropFloat,
     NODE_PROP_INT: PropInt,
-    NODE_PROP_BUTTON: PropButton
+    NODE_PROP_BUTTON: PropButton,
 }
 
 
@@ -740,17 +725,16 @@ def registerPropType(name, prop_class, override=False):
     global WIDGET_MAP
     if name in WIDGET_MAP.keys() and not override:
         raise Exception(
-            'Prop type {} has already exists, '
-            'u can use override=True to override)'
-            .format(name)
+            "Prop type {} has already exists, "
+            "u can use override=True to override)".format(name)
         )
     WIDGET_MAP[name] = prop_class
+
 
 # main property widgets.
 
 
 class PropWindow(QtWidgets.QWidget):
-
     def __init__(self, parent=None):
         super(PropWindow, self).__init__(parent)
         self.__layout = QtWidgets.QGridLayout()
@@ -762,7 +746,7 @@ class PropWindow(QtWidgets.QWidget):
         layout.addLayout(self.__layout)
 
     def __repr__(self):
-        return '<PropWindow object at {}>'.format(hex(id(self)))
+        return "<PropWindow object at {}>".format(hex(id(self)))
 
     def add_widget(self, name, widget, value, label=None):
         """
@@ -784,9 +768,9 @@ class PropWindow(QtWidgets.QWidget):
 
         label = QtWidgets.QLabel(label)
         label_flags = QtCore.Qt.AlignCenter | QtCore.Qt.AlignRight
-        if widget.__class__.__name__ == 'PropTextEdit':
+        if widget.__class__.__name__ == "PropTextEdit":
             label_flags = label_flags | QtCore.Qt.AlignTop
-        elif widget.__class__.__name__ == 'PropButton':
+        elif widget.__class__.__name__ == "PropButton":
             label.setVisible(False)
             widget.setText(name)
         self.__layout.addWidget(label, row, 0, label_flags)
@@ -827,25 +811,25 @@ class NodePropWidget(QtWidgets.QWidget):
         self.__tab_windows = {}
         self.__tab = QtWidgets.QTabWidget()
 
-        close_btn = QtWidgets.QPushButton('X')
-        close_btn.setToolTip('close property')
+        close_btn = QtWidgets.QPushButton("X")
+        close_btn.setToolTip("close property")
         close_btn.clicked.connect(self._on_close)
 
         self.name_wgt = PropLineEdit()
-        self.name_wgt.setToolTip('name')
+        self.name_wgt.setToolTip("name")
         self.name_wgt.set_value(node.name())
         self.name_wgt.value_changed.connect(self._on_property_changed)
 
         self.type_wgt = QtWidgets.QLabel(node.type_)
         self.type_wgt.setAlignment(QtCore.Qt.AlignRight)
-        self.type_wgt.setToolTip('type_')
+        self.type_wgt.setToolTip("type_")
         font = self.type_wgt.font()
         font.setPointSize(10)
         self.type_wgt.setFont(font)
 
         name_layout = QtWidgets.QHBoxLayout()
         name_layout.setContentsMargins(0, 0, 0, 0)
-        name_layout.addWidget(QtWidgets.QLabel('name'))
+        name_layout.addWidget(QtWidgets.QLabel("name"))
         name_layout.addWidget(self.name_wgt)
         name_layout.addWidget(close_btn)
         layout = QtWidgets.QVBoxLayout(self)
@@ -856,7 +840,7 @@ class NodePropWidget(QtWidgets.QWidget):
         self._read_node(node)
 
     def __repr__(self):
-        return '<NodePropWidget object at {}>'.format(hex(id(self)))
+        return "<NodePropWidget object at {}>".format(hex(id(self)))
 
     def _on_close(self):
         """
@@ -894,7 +878,7 @@ class NodePropWidget(QtWidgets.QWidget):
 
         # add tabs.
         for tab in sorted(tab_mapping.keys()):
-            if tab != 'Node':
+            if tab != "Node":
                 self.add_tab(tab)
 
         min_widget_height = 25
@@ -910,43 +894,46 @@ class NodePropWidget(QtWidgets.QWidget):
                 widget = WidClass()
                 widget.setMinimumHeight(min_widget_height)
                 if prop_name in common_props.keys():
-                    if 'items' in common_props[prop_name].keys():
-                        _prop_name = '_' + prop_name + "_"
+                    if "items" in common_props[prop_name].keys():
+                        _prop_name = "_" + prop_name + "_"
                         if node.has_property(_prop_name):
                             widget.set_items(node.get_property(_prop_name))
                         else:
-                            widget.set_items(common_props[prop_name]['items'])
-                    if 'range' in common_props[prop_name].keys():
-                        prop_range = common_props[prop_name]['range']
+                            widget.set_items(common_props[prop_name]["items"])
+                    if "range" in common_props[prop_name].keys():
+                        prop_range = common_props[prop_name]["range"]
                         widget.set_min(prop_range[0])
                         widget.set_max(prop_range[1])
-                    if 'ext' in common_props[prop_name].keys():
-                        widget.set_ext(common_props[prop_name]['ext'])
-                    if 'funcs' in common_props[prop_name].keys():
-                        widget.set_value(common_props[prop_name]['funcs'], node)
+                    if "ext" in common_props[prop_name].keys():
+                        widget.set_ext(common_props[prop_name]["ext"])
+                    if "funcs" in common_props[prop_name].keys():
+                        widget.set_value(common_props[prop_name]["funcs"], node)
 
-                prop_window.add_widget(prop_name, widget, value,
-                                       prop_name.replace('_', ' '))
+                prop_window.add_widget(
+                    prop_name, widget, value, prop_name.replace("_", " ")
+                )
                 widget.value_changed.connect(self._on_property_changed)
 
         # add "Node" tab properties.
-        self.add_tab('Node')
-        default_props = ['color', 'text_color', 'disabled', 'id']
-        prop_window = self.__tab_windows['Node']
+        self.add_tab("Node")
+        default_props = ["color", "text_color", "disabled", "id"]
+        prop_window = self.__tab_windows["Node"]
         for prop_name in default_props:
             wid_type = model.get_widget_type(prop_name)
             WidClass = WIDGET_MAP.get(wid_type)
 
             widget = WidClass()
             widget.setMinimumHeight(min_widget_height)
-            prop_window.add_widget(prop_name,
-                                   widget,
-                                   model.get_property(prop_name),
-                                   prop_name.replace('_', ' '))
+            prop_window.add_widget(
+                prop_name,
+                widget,
+                model.get_property(prop_name),
+                prop_name.replace("_", " "),
+            )
 
             widget.value_changed.connect(self._on_property_changed)
 
-        self.type_wgt.setText(model.get_property('type_'))
+        self.type_wgt.setText(model.get_property("type_"))
 
     def node_id(self):
         """
@@ -957,7 +944,7 @@ class NodePropWidget(QtWidgets.QWidget):
         """
         return self.__node_id
 
-    def add_widget(self, name, widget, tab='Properties'):
+    def add_widget(self, name, widget, tab="Properties"):
         """
         add new node property widget.
 
@@ -967,7 +954,7 @@ class NodePropWidget(QtWidgets.QWidget):
             tab (str): tab name.
         """
         if tab not in self._widgets.keys():
-            tab = 'Properties'
+            tab = "Properties"
         window = self.__tab_windows[tab]
         window.add_widget(name, widget)
         widget.value_changed.connect(self._on_property_changed)
@@ -983,7 +970,7 @@ class NodePropWidget(QtWidgets.QWidget):
             PropWindow: tab child widget.
         """
         if name in self.__tab_windows.keys():
-            raise AssertionError('Tab name {} already taken!'.format(name))
+            raise AssertionError("Tab name {} already taken!".format(name))
         self.__tab_windows[name] = PropWindow(self)
         self.__tab.addTab(self.__tab_windows[name], name)
         return self.__tab_windows[name]
@@ -998,7 +985,7 @@ class NodePropWidget(QtWidgets.QWidget):
         Returns:
             QtWidgets.QWidget: property widget.
         """
-        if name == 'name':
+        if name == "name":
             return self.name_wgt
         for tab_name, prop_win in self.__tab_windows.items():
             widget = prop_win.get_widget(name)
@@ -1006,51 +993,46 @@ class NodePropWidget(QtWidgets.QWidget):
                 return widget
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
+
     from NodeGraphQt import BaseNode, NodeGraph
 
-
     class TestNode(BaseNode):
-        NODE_NAME = 'test node'
+        NODE_NAME = "test node"
 
         def __init__(self):
             super(TestNode, self).__init__()
-            self.create_property('label_test', 'foo bar',
-                                 widget_type=NODE_PROP_QLABEL)
-            self.create_property('line_edit', 'hello',
-                                 widget_type=NODE_PROP_QLINEEDIT)
-            self.create_property('color_picker', (0, 0, 255),
-                                 widget_type=NODE_PROP_COLORPICKER)
-            self.create_property('integer', 10,
-                                 widget_type=NODE_PROP_QSPINBOX)
-            self.create_property('list', 'foo',
-                                 items=['foo', 'bar'],
-                                 widget_type=NODE_PROP_QCOMBO)
-            self.create_property('range', 50,
-                                 range=(45, 55),
-                                 widget_type=NODE_PROP_SLIDER)
-            self.create_property('text_edit', 'test text',
-                                 widget_type=NODE_PROP_QTEXTEDIT,
-                                 tab='text')
-
+            self.create_property("label_test", "foo bar", widget_type=NODE_PROP_QLABEL)
+            self.create_property("line_edit", "hello", widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property(
+                "color_picker", (0, 0, 255), widget_type=NODE_PROP_COLORPICKER
+            )
+            self.create_property("integer", 10, widget_type=NODE_PROP_QSPINBOX)
+            self.create_property(
+                "list", "foo", items=["foo", "bar"], widget_type=NODE_PROP_QCOMBO
+            )
+            self.create_property(
+                "range", 50, range=(45, 55), widget_type=NODE_PROP_SLIDER
+            )
+            self.create_property(
+                "text_edit", "test text", widget_type=NODE_PROP_QTEXTEDIT, tab="text"
+            )
 
     def prop_changed(node_id, prop_name, prop_value):
-        print('-' * 100)
+        print("-" * 100)
         print(node_id, prop_name, prop_value)
 
-
     def prop_close(node_id):
-        print('=' * 100)
+        print("=" * 100)
         print(node_id)
-
 
     app = QtWidgets.QApplication(sys.argv)
 
     graph = NodeGraph()
     graph.register_node(TestNode)
 
-    test_node = graph.create_node('nodeGraphQt.nodes.TestNode')
+    test_node = graph.create_node("nodeGraphQt.nodes.TestNode")
 
     node_prop = NodePropWidget(node=test_node)
     node_prop.property_changed.connect(prop_changed)

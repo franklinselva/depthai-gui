@@ -1,10 +1,10 @@
-from Qt import QtWidgets, QtCore
+from Qt import QtCore, QtWidgets
 
-from NodeGraphQt.widgets.stylesheet import STYLE_SLASH_BUTTON, STYLE_NODE_BUTTON
+from NodeGraphQt.widgets.stylesheet import (STYLE_NODE_BUTTON,
+                                            STYLE_SLASH_BUTTON)
 
 
 class node_space_bar(QtWidgets.QWidget):
-
     def __init__(self, graph):
         super(node_space_bar, self).__init__()
         self.setMaximumHeight(20)
@@ -27,7 +27,7 @@ class node_space_bar(QtWidgets.QWidget):
     def add_node(self, node):
         node_name = node.name()
         btn_node = QtWidgets.QPushButton(node_name)
-        btn_node.setFixedWidth(len(node_name)*8)
+        btn_node.setFixedWidth(len(node_name) * 8)
         btn_node.setStyleSheet(STYLE_NODE_BUTTON)
         btn_node.setFixedHeight(20)
         btn_node.clicked.connect(lambda: self.graph.set_node_space(node))

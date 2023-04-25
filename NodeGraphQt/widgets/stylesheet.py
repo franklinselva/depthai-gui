@@ -3,12 +3,12 @@ import re
 from NodeGraphQt.constants import ICON_DOWN_ARROW
 
 # Reformat the icon path on Windows OS.
-match = re.match('(\\w:)', ICON_DOWN_ARROW)
+match = re.match("(\\w:)", ICON_DOWN_ARROW)
 if match:
-    ICON_DOWN_ARROW = ICON_DOWN_ARROW[len(match.group(1)):]
-    ICON_DOWN_ARROW = ICON_DOWN_ARROW.replace('\\', '/')
+    ICON_DOWN_ARROW = ICON_DOWN_ARROW[len(match.group(1)) :]
+    ICON_DOWN_ARROW = ICON_DOWN_ARROW.replace("\\", "/")
 
-STYLE_QGROUPBOX = '''
+STYLE_QGROUPBOX = """
 QGroupBox {
     background-color: rgba(0, 0, 0, 0);
     border: 0px solid rgba(0, 0, 0, 0);
@@ -26,9 +26,9 @@ QGroupBox::title {
     padding: 0px;
     left:-4px;
 }
-'''
+"""
 
-STYLE_QLINEEDIT = '''
+STYLE_QLINEEDIT = """
 QLineEdit {
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 0px;
@@ -36,9 +36,9 @@ QLineEdit {
     background: rgba(0, 0, 0, 80);
     selection-background-color: rgba(255, 198, 10, 155);
 }
-'''
+"""
 
-STYLE_QTEXTEDIT = '''
+STYLE_QTEXTEDIT = """
 QTextEdit {
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 0px;
@@ -46,9 +46,9 @@ QTextEdit {
     background: rgba(0, 0, 0, 80);
     selection-background-color: rgba(255, 198, 10, 155);
 }
-'''
+"""
 
-STYLE_TABSEARCH = '''
+STYLE_TABSEARCH = """
 QLineEdit {
     border: 2px solid rgba(170, 140, 0, 255);
     border-radius: 0px;
@@ -58,19 +58,19 @@ QLineEdit {
     background: rgba(20, 20, 20, 255);
     selection-background-color: rgba(219, 158, 0, 255);
 }
-'''
+"""
 
 
-STYLE_TABSEARCH_LIST = '''
+STYLE_TABSEARCH_LIST = """
 QListView {
     background-color: rgba(40, 40, 40, 255);
     border: 1px solid rgba(20, 20, 20, 255);
     color: rgba(255, 255, 255, 150);
     padding-top: 4px;
 }
-'''
+"""
 
-STYLE_QCOMBOBOX = '''
+STYLE_QCOMBOBOX = """
 QComboBox {
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 0px;
@@ -110,9 +110,11 @@ QComboBox::down-arrow:on {
     /* shift the arrow when popup is open */
     top: 1px;
     left: 1px;
-}'''.replace('$ICON_DOWN_ARROW', ICON_DOWN_ARROW)
+}""".replace(
+    "$ICON_DOWN_ARROW", ICON_DOWN_ARROW
+)
 
-STYLE_QLISTVIEW = '''
+STYLE_QLISTVIEW = """
 QListView {
     background: rgba(80, 80, 80, 255);
     border: 0px solid rgba(0, 0, 0, 0);
@@ -133,9 +135,9 @@ QListView::item:selected {
     margin:0px;
     padding: 2px;
 }
-'''
+"""
 
-STYLE_QMENU = '''
+STYLE_QMENU = """
 QMenu {
     color: rgba(255, 255, 255, 200);
     background-color: rgba(47, 47, 47, 255);
@@ -155,9 +157,9 @@ QMenu::separator {
     background: rgba(255, 255, 255, 50);
     margin: 4px 8px;
 }
-'''
+"""
 
-STYLE_QCHECKBOX = '''
+STYLE_QCHECKBOX = """
 QCheckBox {
     color: rgba(255, 255, 255, 150);
     background-color: transparent;
@@ -169,9 +171,9 @@ QCheckBox::indicator {
     width: 13px;
     height: 13px;
 }
-'''
+"""
 
-STYLE_QPUSHBUTTON = '''
+STYLE_QPUSHBUTTON = """
 QPushButton {
     background: transparent;
     border-style: outset;
@@ -186,15 +188,15 @@ QPushButton::pressed {
 QPushButton::hover {
     background: rgba(255,255,255,30);
 }
-'''
-STYLE_QWIDGET = '''
+"""
+STYLE_QWIDGET = """
 QWidget{
     border: 0px;
     background-color: transparent;
 }
-'''
+"""
 
-STYLE_MESSAGEBOX = '''
+STYLE_MESSAGEBOX = """
 QLabel{ 
     font-size: 18px;
     background-color: transparent;
@@ -219,9 +221,9 @@ QMessageBox{
     background-color: rgb(55, 55, 55);
     color: rgb(200 ,200, 200);
 }
-'''
+"""
 
-STYLE_SLASH_BUTTON = '''
+STYLE_SLASH_BUTTON = """
 QPushButton {
     border-radius: 0px;
     border-width: 0px;
@@ -230,8 +232,8 @@ QPushButton {
     padding-right: 0px;
     background-color:transparent;
 }
-'''
-STYLE_NODE_BUTTON = '''
+"""
+STYLE_NODE_BUTTON = """
 QPushButton {
     border-radius: 0px;
     border-width: 1px;
@@ -247,4 +249,4 @@ QPushButton::pressed {
     }
 QPushButton::hover {
     background-color: rgb(10,80,150);
-}'''
+}"""

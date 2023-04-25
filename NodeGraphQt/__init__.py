@@ -74,50 +74,49 @@ example code:
 """
 
 from NodeGraphQt.base.graph import NodeGraph, SubGraph
-from NodeGraphQt.base.menu import NodesMenu, NodeGraphMenu, NodeGraphCommand
-from NodeGraphQt.base.node import NodeObject, BaseNode, BackdropNode
+from NodeGraphQt.base.menu import NodeGraphCommand, NodeGraphMenu, NodesMenu
+from NodeGraphQt.base.node import BackdropNode, BaseNode, NodeObject
 from NodeGraphQt.base.port import Port
-from NodeGraphQt.pkg_info import __version__ as VERSION
-from NodeGraphQt.pkg_info import __license__ as LICENSE
-
 # functions
-from NodeGraphQt.base.utils import setup_context_menu, \
-    topological_sort_by_up, topological_sort_by_down, \
-    update_node_down_stream, update_node_up_stream,\
-    update_nodes_by_up, update_nodes_by_down
-
-# widgets
-from NodeGraphQt.widgets.nodes_tree import NodeTreeWidget
-from NodeGraphQt.widgets.nodes_palette import NodesPaletteWidget
-from NodeGraphQt.widgets.properties_bin import PropertiesBinWidget
+from NodeGraphQt.base.utils import (setup_context_menu,
+                                    topological_sort_by_down,
+                                    topological_sort_by_up,
+                                    update_node_down_stream,
+                                    update_node_up_stream,
+                                    update_nodes_by_down, update_nodes_by_up)
+from NodeGraphQt.pkg_info import __license__ as LICENSE
+from NodeGraphQt.pkg_info import __version__ as VERSION
 from NodeGraphQt.widgets.node_publish_widget import NodePublishWidget
 from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
-
+from NodeGraphQt.widgets.nodes_palette import NodesPaletteWidget
+# widgets
+from NodeGraphQt.widgets.nodes_tree import NodeTreeWidget
+from NodeGraphQt.widgets.properties_bin import PropertiesBinWidget
 
 __version__ = VERSION
 __all__ = [
-    'BackdropNode',
-    'BaseNode',
-    'LICENSE',
-    'NodeBaseWidget',
-    'NodeGraph',
-    'NodeGraphCommand',
-    'NodeGraphMenu',
-    'NodeObject',
-    'NodesPaletteWidget',
-    'NodeTreeWidget',
-    'NodesMenu',
-    'Port',
-    'PropertiesBinWidget',
-    'VERSION',
-    'constants',
-    'setup_context_menu',
-    'NodePublishWidget',
-    'SubGraph',
-    'topological_sort_by_up',
-    'topological_sort_by_down',
-    'update_node_up_stream',
-    'update_node_down_stream',
-    'update_nodes_by_up',
-    'update_nodes_by_down',
+    "BackdropNode",
+    "BaseNode",
+    "LICENSE",
+    "NodeBaseWidget",
+    "NodeGraph",
+    "NodeGraphCommand",
+    "NodeGraphMenu",
+    "NodeObject",
+    "NodesPaletteWidget",
+    "NodeTreeWidget",
+    "NodesMenu",
+    "Port",
+    "PropertiesBinWidget",
+    "VERSION",
+    "constants",
+    "setup_context_menu",
+    "NodePublishWidget",
+    "SubGraph",
+    "topological_sort_by_up",
+    "topological_sort_by_down",
+    "update_node_up_stream",
+    "update_node_down_stream",
+    "update_nodes_by_up",
+    "update_nodes_by_down",
 ]

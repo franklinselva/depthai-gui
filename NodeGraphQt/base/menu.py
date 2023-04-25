@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from distutils.version import LooseVersion
 
-from Qt import QtGui, QtCore
+from Qt import QtCore, QtGui
 
 from NodeGraphQt.errors import NodeMenuError
 from NodeGraphQt.widgets.actions import BaseMenu, GraphAction, NodeAction
@@ -31,7 +31,8 @@ class NodeGraphMenu(object):
 
     def __repr__(self):
         return '<{}("{}") object at {}>'.format(
-            self.__class__.__name__, self.name(), hex(id(self)))
+            self.__class__.__name__, self.name(), hex(id(self))
+        )
 
     @property
     def qmenu(self):
@@ -87,6 +88,7 @@ class NodeGraphMenu(object):
         Returns:
             list[NodeGraphQt.MenuCommand]: list of commands.
         """
+
         def get_actions(menu):
             actions = []
             for action in menu.actions():
@@ -96,6 +98,7 @@ class NodeGraphMenu(object):
                 else:
                     actions += get_actions(action.menu())
             return actions
+
         child_actions = get_actions(self.qmenu)
         return [NodeGraphCommand(self._graph, a) for a in child_actions]
 
@@ -127,7 +130,7 @@ class NodeGraphMenu(object):
         """
         action = GraphAction(name, self._graph.viewer())
         action.graph = self._graph
-        if LooseVersion(QtCore.qVersion()) >= LooseVersion('5.10'):
+        if LooseVersion(QtCore.qVersion()) >= LooseVersion("5.10"):
             action.setShortcutVisibleInContextMenu(True)
         if shortcut:
             action.setShortcut(shortcut)
@@ -176,7 +179,7 @@ class NodesMenu(NodeGraphMenu):
             NodeGraphQt.NodeGraphCommand: the appended command.
         """
         if not node_type and not node_class:
-            raise NodeMenuError('Node type or Node class not specified!')
+            raise NodeMenuError("Node type or Node class not specified!")
 
         if node_class:
             node_type = node_class.__name__
@@ -196,7 +199,7 @@ class NodesMenu(NodeGraphMenu):
 
         action = NodeAction(name, self._graph.viewer())
         action.graph = self._graph
-        if LooseVersion(QtCore.qVersion()) >= LooseVersion('5.10'):
+        if LooseVersion(QtCore.qVersion()) >= LooseVersion("5.10"):
             action.setShortcutVisibleInContextMenu(True)
         if func:
             action.executed.connect(func)
@@ -223,7 +226,8 @@ class NodeGraphCommand(object):
 
     def __repr__(self):
         return '<{}("{}") object at {}>'.format(
-            self.__class__.__name__, self.name(), hex(id(self)))
+            self.__class__.__name__, self.name(), hex(id(self))
+        )
 
     @property
     def qaction(self):

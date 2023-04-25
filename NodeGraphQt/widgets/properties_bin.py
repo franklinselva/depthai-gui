@@ -1,11 +1,10 @@
 #!/usr/bin/python
-from Qt import QtWidgets, QtCore, QtGui, QtCompat
+from Qt import QtCompat, QtCore, QtGui, QtWidgets
 
 from NodeGraphQt.widgets.properties import NodePropWidget
 
 
 class PropertiesDelegate(QtWidgets.QStyledItemDelegate):
-
     def paint(self, painter, option, index):
         """
         Args:
@@ -32,17 +31,18 @@ class PropertiesDelegate(QtWidgets.QStyledItemDelegate):
             painter.setPen(QtGui.QPen(bdr_clr, 1))
 
         painter.setBrush(QtCore.Qt.NoBrush)
-        painter.drawRect(QtCore.QRect(
-            option.rect.x() + border_width,
-            option.rect.y() + border_width,
-            option.rect.width() - (border_width * 2),
-            option.rect.height() - (border_width * 2))
+        painter.drawRect(
+            QtCore.QRect(
+                option.rect.x() + border_width,
+                option.rect.y() + border_width,
+                option.rect.width() - (border_width * 2),
+                option.rect.height() - (border_width * 2),
+            )
         )
         painter.restore()
 
 
 class PropertiesList(QtWidgets.QTableWidget):
-
     def __init__(self, parent=None):
         super(PropertiesList, self).__init__(parent)
         self.setItemDelegate(PropertiesDelegate())
@@ -51,16 +51,16 @@ class PropertiesList(QtWidgets.QTableWidget):
         self.verticalHeader().hide()
         self.horizontalHeader().hide()
         QtCompat.QHeaderView.setSectionResizeMode(
-            self.verticalHeader(), QtWidgets.QHeaderView.ResizeToContents)
+            self.verticalHeader(), QtWidgets.QHeaderView.ResizeToContents
+        )
         QtCompat.QHeaderView.setSectionResizeMode(
-            self.horizontalHeader(), 0, QtWidgets.QHeaderView.Stretch)
+            self.horizontalHeader(), 0, QtWidgets.QHeaderView.Stretch
+        )
         self.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
 
     def wheelEvent(self, event):
         delta = event.delta() * 0.2
-        self.verticalScrollBar().setValue(
-            self.verticalScrollBar().value() - delta
-        )
+        self.verticalScrollBar().setValue(self.verticalScrollBar().value() - delta)
 
 
 class PropertiesBinWidget(QtWidgets.QWidget):
@@ -77,10 +77,10 @@ class PropertiesBinWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None, node_graph=None):
         super(PropertiesBinWidget, self).__init__(parent)
-        self.setWindowTitle('Properties Bin')
+        self.setWindowTitle("Properties Bin")
         self._prop_list = PropertiesList()
         self._limit = QtWidgets.QSpinBox()
-        self._limit.setToolTip('Set display nodes limit.')
+        self._limit.setToolTip("Set display nodes limit.")
         self._limit.setMaximum(10)
         self._limit.setMinimum(0)
         self._limit.setValue(2)
@@ -90,13 +90,14 @@ class PropertiesBinWidget(QtWidgets.QWidget):
         self._block_signal = False
 
         self._lock = False
-        self.btn_lock = QtWidgets.QPushButton('lock')
+        self.btn_lock = QtWidgets.QPushButton("lock")
         self.btn_lock.setToolTip(
-            'Lock the properties bin prevent nodes from being loaded.')
+            "Lock the properties bin prevent nodes from being loaded."
+        )
         self.btn_lock.clicked.connect(self.lock_bin)
 
-        btn_clr = QtWidgets.QPushButton('clear')
-        btn_clr.setToolTip('Clear the properties bin.')
+        btn_clr = QtWidgets.QPushButton("clear")
+        btn_clr.setToolTip("Clear the properties bin.")
         btn_clr.clicked.connect(self.clear_bin)
 
         top_layout = QtWidgets.QHBoxLayout()
@@ -117,7 +118,7 @@ class PropertiesBinWidget(QtWidgets.QWidget):
         node_graph.property_changed.connect(self.__on_graph_property_changed)
 
     def __repr__(self):
-        return '<{} object at {}>'.format(self.__class__.__name__, hex(id(self)))
+        return "<{} object at {}>".format(self.__class__.__name__, hex(id(self)))
 
     def __on_prop_close(self, node_id):
         items = self._prop_list.findItems(node_id, QtCore.Qt.MatchExactly)
@@ -239,9 +240,9 @@ class PropertiesBinWidget(QtWidgets.QWidget):
         """
         self._lock = not self._lock
         if self._lock:
-            self.btn_lock.setText('UnLock')
+            self.btn_lock.setText("UnLock")
         else:
-            self.btn_lock.setText('Lock')
+            self.btn_lock.setText("Lock")
 
     def clear_bin(self):
         """
@@ -266,41 +267,35 @@ class PropertiesBinWidget(QtWidgets.QWidget):
             return self._prop_list.cellWidget(item.row(), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
-    from NodeGraphQt import BaseNode, NodeGraph
-    from NodeGraphQt.constants import (NODE_PROP_QLABEL,
-                             NODE_PROP_QLINEEDIT,
-                             NODE_PROP_QCOMBO,
-                             NODE_PROP_QSPINBOX,
-                             NODE_PROP_COLORPICKER,
-                             NODE_PROP_SLIDER)
 
+    from NodeGraphQt import BaseNode, NodeGraph
+    from NodeGraphQt.constants import (NODE_PROP_COLORPICKER, NODE_PROP_QCOMBO,
+                                       NODE_PROP_QLABEL, NODE_PROP_QLINEEDIT,
+                                       NODE_PROP_QSPINBOX, NODE_PROP_SLIDER)
 
     class TestNode(BaseNode):
-        NODE_NAME = 'test node'
+        NODE_NAME = "test node"
 
         def __init__(self):
             super(TestNode, self).__init__()
-            self.create_property('label_test', 'foo bar',
-                                 widget_type=NODE_PROP_QLABEL)
-            self.create_property('text_edit', 'hello',
-                                 widget_type=NODE_PROP_QLINEEDIT)
-            self.create_property('color_picker', (0, 0, 255),
-                                 widget_type=NODE_PROP_COLORPICKER)
-            self.create_property('integer', 10,
-                                 widget_type=NODE_PROP_QSPINBOX)
-            self.create_property('list', 'foo',
-                                 items=['foo', 'bar'],
-                                 widget_type=NODE_PROP_QCOMBO)
-            self.create_property('range', 50,
-                                 range=(45, 55),
-                                 widget_type=NODE_PROP_SLIDER)
+            self.create_property("label_test", "foo bar", widget_type=NODE_PROP_QLABEL)
+            self.create_property("text_edit", "hello", widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property(
+                "color_picker", (0, 0, 255), widget_type=NODE_PROP_COLORPICKER
+            )
+            self.create_property("integer", 10, widget_type=NODE_PROP_QSPINBOX)
+            self.create_property(
+                "list", "foo", items=["foo", "bar"], widget_type=NODE_PROP_QCOMBO
+            )
+            self.create_property(
+                "range", 50, range=(45, 55), widget_type=NODE_PROP_SLIDER
+            )
 
     def prop_changed(node_id, prop_name, prop_value):
-        print('-'*100)
+        print("-" * 100)
         print(node_id, prop_name, prop_value)
-
 
     app = QtWidgets.QApplication(sys.argv)
 
@@ -310,7 +305,7 @@ if __name__ == '__main__':
     prop_bin = PropertiesBinWidget(node_graph=graph)
     prop_bin.property_changed.connect(prop_changed)
 
-    node = graph.create_node('nodeGraphQt.nodes.TestNode')
+    node = graph.create_node("nodeGraphQt.nodes.TestNode")
 
     prop_bin.add_node(node)
     prop_bin.show()

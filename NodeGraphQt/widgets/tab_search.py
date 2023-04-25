@@ -2,9 +2,10 @@
 import re
 from collections import OrderedDict
 
-from Qt import QtCore, QtWidgets, QtGui
+from Qt import QtCore, QtGui, QtWidgets
 
-from NodeGraphQt.widgets.stylesheet import STYLE_TABSEARCH, STYLE_TABSEARCH_LIST, STYLE_QMENU
+from NodeGraphQt.widgets.stylesheet import (STYLE_QMENU, STYLE_TABSEARCH,
+                                            STYLE_TABSEARCH_LIST)
 
 
 class TabSearchCompleter(QtWidgets.QCompleter):
@@ -17,7 +18,7 @@ class TabSearchCompleter(QtWidgets.QCompleter):
         super(TabSearchCompleter, self).__init__(nodes, parent)
         self.setCompletionMode(self.PopupCompletion)
         self.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self._local_completion_prefix = ''
+        self._local_completion_prefix = ""
         self._using_orig_model = False
         self._source_model = None
         self._filter_model = None
@@ -36,9 +37,11 @@ class TabSearchCompleter(QtWidgets.QCompleter):
         if not self._using_orig_model:
             self._filter_model.setSourceModel(self._source_model)
 
-        pattern = QtCore.QRegExp(self._local_completion_prefix,
-                                 QtCore.Qt.CaseInsensitive,
-                                 QtCore.QRegExp.FixedString)
+        pattern = QtCore.QRegExp(
+            self._local_completion_prefix,
+            QtCore.Qt.CaseInsensitive,
+            QtCore.QRegExp.FixedString,
+        )
         self._filter_model.setFilterRegExp(pattern)
 
     def setModel(self, model):
@@ -76,7 +79,7 @@ class TabSearchWidget(QtWidgets.QLineEdit):
         self.returnPressed.connect(self._on_search_submitted)
 
     def __repr__(self):
-        return '<{} at {}>'.format(self.__class__.__name__, hex(id(self)))
+        return "<{} at {}>".format(self.__class__.__name__, hex(id(self)))
 
     def _on_search_submitted(self, index=0):
         node_type = self._node_dict.get(self.text())
@@ -109,7 +112,7 @@ class TabSearchWidget(QtWidgets.QLineEdit):
                 self._node_dict[name] = node_types[0]
                 continue
             for node_id in node_types:
-                self._node_dict['{} ({})'.format(name, node_id)] = node_id
+                self._node_dict["{} ({})".format(name, node_id)] = node_id
         node_names = sorted(self._node_dict.keys())
         self._model.setStringList(node_names)
         self._completer.setModel(self._model)
@@ -148,7 +151,7 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
         self._wire_signals()
 
     def __repr__(self):
-        return '<{} at {}>'.format(self.__class__.__name__, hex(id(self)))
+        return "<{} at {}>".format(self.__class__.__name__, hex(id(self)))
 
     def keyPressEvent(self, event):
         super(TabSearchMenuWidget, self).keyPressEvent(event)
@@ -157,7 +160,7 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
     @staticmethod
     def _fuzzy_finder(key, collection):
         suggestions = []
-        pattern = '.*?'.join(key.lower())
+        pattern = ".*?".join(key.lower())
         regex = re.compile(pattern)
         for item in collection:
             match = regex.search(item.lower())
@@ -235,7 +238,7 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
         for node_type in node_types:
             trees = ".".join(node_type.split(".")[:-1]).split("::")
             for depth, menu_name in enumerate(trees):
-                menu_path = "::".join(trees[:depth+1])
+                menu_path = "::".join(trees[: depth + 1])
                 if depth in menu_tree.keys():
                     if menu_name not in menu_tree[depth].keys():
                         new_menu = QtWidgets.QMenu(menu_name)
@@ -249,9 +252,9 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
                 if depth > 0:
                     new_menu.parentPath = "::".join(trees[:depth])
 
-                max_depth = max(max_depth,depth)
+                max_depth = max(max_depth, depth)
 
-        for i in range(max_depth+1):
+        for i in range(max_depth + 1):
             menus = menu_tree[i]
             for menu_path, menu in menus.items():
                 self._menus[menu_path] = menu
@@ -288,9 +291,8 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
                     self._node_dict[name] = node_types[0]
                     continue
                 for node_id in node_types:
-                    self._node_dict['{} ({})'.format(name, node_id)] = node_id
+                    self._node_dict["{} ({})".format(name, node_id)] = node_id
             self.build_menu_tree()
             self.rebuild = False
 
         self._show()
-

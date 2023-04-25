@@ -3,22 +3,22 @@ import math
 
 from Qt import QtCore, QtGui, QtWidgets
 
+from NodeGraphQt.constants import (IN_PORT, ITEM_CACHE_MODE,
+                                   NODE_LAYOUT_DIRECTION,
+                                   NODE_LAYOUT_HORIZONTAL,
+                                   NODE_LAYOUT_VERTICAL, OUT_PORT,
+                                   PIPE_ACTIVE_COLOR, PIPE_DEFAULT_COLOR,
+                                   PIPE_DISABLED_COLOR, PIPE_HIGHLIGHT_COLOR,
+                                   PIPE_LAYOUT_ANGLE, PIPE_LAYOUT_CURVED,
+                                   PIPE_LAYOUT_STRAIGHT, PIPE_STYLE_DASHED,
+                                   PIPE_STYLE_DEFAULT, PIPE_STYLE_DOTTED,
+                                   PIPE_WIDTH, Z_VAL_NODE_WIDGET, Z_VAL_PIPE)
 from NodeGraphQt.qgraphics.port import PortItem
-from NodeGraphQt.constants import (
-    PIPE_DEFAULT_COLOR, PIPE_ACTIVE_COLOR,
-    PIPE_HIGHLIGHT_COLOR, PIPE_DISABLED_COLOR,
-    PIPE_STYLE_DASHED, PIPE_STYLE_DEFAULT, PIPE_STYLE_DOTTED,
-    PIPE_LAYOUT_STRAIGHT, PIPE_WIDTH, IN_PORT, OUT_PORT, Z_VAL_PIPE,
-    Z_VAL_NODE_WIDGET,
-    PIPE_LAYOUT_ANGLE, PIPE_LAYOUT_CURVED,
-    ITEM_CACHE_MODE,
-    NODE_LAYOUT_VERTICAL, NODE_LAYOUT_HORIZONTAL,
-    NODE_LAYOUT_DIRECTION)
 
 PIPE_STYLES = {
     PIPE_STYLE_DEFAULT: QtCore.Qt.SolidLine,
     PIPE_STYLE_DASHED: QtCore.Qt.DashLine,
-    PIPE_STYLE_DOTTED: QtCore.Qt.DotLine
+    PIPE_STYLE_DOTTED: QtCore.Qt.DotLine,
 }
 
 
@@ -46,10 +46,9 @@ class Pipe(QtWidgets.QGraphicsPathItem):
         self.setCacheMode(ITEM_CACHE_MODE)
 
     def __repr__(self):
-        in_name = self._input_port.name if self._input_port else ''
-        out_name = self._output_port.name if self._output_port else ''
-        return '{}.Pipe(\'{}\', \'{}\')'.format(
-            self.__module__, in_name, out_name)
+        in_name = self._input_port.name if self._input_port else ""
+        out_name = self._output_port.name if self._output_port else ""
+        return "{}.Pipe('{}', '{}')".format(self.__module__, in_name, out_name)
 
     def hoverEnterEvent(self, event):
         self.activate()
@@ -124,7 +123,7 @@ class Pipe(QtWidgets.QGraphicsPathItem):
 
             pen_width = 0.6
             if dist < 1.0:
-                pen_width *= (1.0 + dist)
+                pen_width *= 1.0 + dist
 
             pen = QtGui.QPen(color, pen_width)
             pen.setCapStyle(QtCore.Qt.RoundCap)
@@ -133,8 +132,7 @@ class Pipe(QtWidgets.QGraphicsPathItem):
 
             transform = QtGui.QTransform()
             transform.translate(cen_x, cen_y)
-            radians = math.atan2(tgt_pt.y() - loc_pt.y(),
-                                 tgt_pt.x() - loc_pt.x())
+            radians = math.atan2(tgt_pt.y() - loc_pt.y(), tgt_pt.x() - loc_pt.x())
             degrees = math.degrees(radians) - 90
             transform.rotate(degrees)
             if dist < 1.0:
@@ -172,7 +170,7 @@ class Pipe(QtWidgets.QGraphicsPathItem):
             self.setPath(path)
         elif self.viewer_pipe_layout() == PIPE_LAYOUT_ANGLE:
             ctr_offset_y1, ctr_offset_y2 = pos1.y(), pos2.y()
-            distance = abs(ctr_offset_y1 - ctr_offset_y2)/2
+            distance = abs(ctr_offset_y1 - ctr_offset_y2) / 2
             if start_port.port_type == IN_PORT:
                 ctr_offset_y1 -= distance
                 ctr_offset_y2 += distance
@@ -321,10 +319,7 @@ class Pipe(QtWidgets.QGraphicsPathItem):
         self.setPen(pen)
 
     def set_connections(self, port1, port2):
-        ports = {
-            port1.port_type: port1,
-            port2.port_type: port2
-        }
+        ports = {port1.port_type: port1, port2.port_type: port2}
         self.input_port = ports[IN_PORT]
         self.output_port = ports[OUT_PORT]
         ports[IN_PORT].add_pipe(self)
@@ -392,7 +387,6 @@ class Pipe(QtWidgets.QGraphicsPathItem):
 
 
 class LivePipe(Pipe):
-
     def __init__(self):
         super(LivePipe, self).__init__()
         self.setZValue(Z_VAL_NODE_WIDGET + 1)
@@ -434,17 +428,17 @@ class LivePipe(Pipe):
 
         # draw start circle
         size = 5.0
-        rect = QtCore.QRectF(start_pt.x() - (size / 2),
-                             start_pt.y() - (size / 2),
-                             size, size)
+        rect = QtCore.QRectF(
+            start_pt.x() - (size / 2), start_pt.y() - (size / 2), size, size
+        )
         painter.setBrush(color)
         painter.drawEllipse(rect)
 
         # draw middle circle
         size = 10.0
         if dist < 50.0:
-            size *= (dist / 50.0)
-        rect = QtCore.QRectF(cen_x-(size/2), cen_y-(size/2), size, size)
+            size *= dist / 50.0
+        rect = QtCore.QRectF(cen_x - (size / 2), cen_y - (size / 2), size, size)
         painter.setBrush(color)
         painter.setPen(QtGui.QPen(color.darker(130), pen_width))
         painter.drawEllipse(rect)
@@ -461,8 +455,7 @@ class LivePipe(Pipe):
         transform = QtGui.QTransform()
         transform.translate(tgt_pt.x(), tgt_pt.y())
 
-        radians = math.atan2(tgt_pt.y() - loc_pt.y(),
-                             tgt_pt.x() - loc_pt.x())
+        radians = math.atan2(tgt_pt.y() - loc_pt.y(), tgt_pt.x() - loc_pt.x())
         degrees = math.degrees(radians) + 90
         transform.rotate(degrees)
 

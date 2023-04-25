@@ -3,7 +3,7 @@ import math
 
 from Qt import QtCore, QtGui, QtWidgets
 
-from NodeGraphQt.constants import Z_VAL_NODE_WIDGET, PIPE_SLICER_COLOR
+from NodeGraphQt.constants import PIPE_SLICER_COLOR, Z_VAL_NODE_WIDGET
 
 
 class SlicerPipe(QtWidgets.QGraphicsPathItem):
@@ -38,7 +38,7 @@ class SlicerPipe(QtWidgets.QGraphicsPathItem):
         font = painter.font()
         font.setPointSize(12)
         painter.setFont(font)
-        text = 'slice'
+        text = "slice"
         text_x = painter.fontMetrics().width(text) / 2
         text_y = painter.fontMetrics().height() / 1.5
         text_pos = QtCore.QPointF(p1.x() - text_x, p1.y() - text_y)
@@ -66,8 +66,7 @@ class SlicerPipe(QtWidgets.QGraphicsPathItem):
 
         transform = QtGui.QTransform()
         transform.translate(p2.x(), p2.y())
-        radians = math.atan2(p2.y() - p1.y(),
-                             p2.x() - p1.x())
+        radians = math.atan2(p2.y() - p1.y(), p2.x() - p1.x())
         degrees = math.degrees(radians) - 90
         transform.rotate(degrees)
 

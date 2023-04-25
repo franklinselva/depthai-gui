@@ -1,10 +1,10 @@
 #!/usr/bin/python
 from Qt import QtCore, QtWidgets
+
 from NodeGraphQt.widgets.stylesheet import STYLE_QMENU
 
 
 class BaseMenu(QtWidgets.QMenu):
-
     def __init__(self, *args, **kwargs):
         super(BaseMenu, self).__init__(*args, **kwargs)
         self.setStyleSheet(STYLE_QMENU)

@@ -1,15 +1,14 @@
 #!/usr/bin/python
+from Qt import QtCore, QtGui, QtWidgets
+
+from NodeGraphQt.constants import Z_VAL_NODE_WIDGET
+from NodeGraphQt.errors import NodeWidgetError
 from NodeGraphQt.widgets.dialogs import FileDialog
 from NodeGraphQt.widgets.properties import _ValueEdit
 from NodeGraphQt.widgets.stylesheet import *
 
-from Qt import QtCore, QtWidgets, QtGui
-from NodeGraphQt.constants import Z_VAL_NODE_WIDGET
-from NodeGraphQt.errors import NodeWidgetError
-
 
 class _NodeGroupBox(QtWidgets.QGroupBox):
-
     def __init__(self, label, parent=None):
         super(_NodeGroupBox, self).__init__(parent)
         layout = QtWidgets.QVBoxLayout(self)
@@ -18,11 +17,11 @@ class _NodeGroupBox(QtWidgets.QGroupBox):
 
     def setTitle(self, text):
         margin = (0, 0, 0, 0)
-        padding_top = '14px'
-        if text == '':
+        padding_top = "14px"
+        if text == "":
             margin = (0, 2, 0, 0)
-            padding_top = '2px'
-        style = STYLE_QGROUPBOX.replace('$PADDING_TOP', padding_top)
+            padding_top = "2px"
+        style = STYLE_QGROUPBOX.replace("$PADDING_TOP", padding_top)
         self.layout().setContentsMargins(*margin)
         self.setStyleSheet(style)
         super(_NodeGroupBox, self).setTitle(text)
@@ -56,7 +55,7 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
     :emits: property name, propety value
     """
 
-    def __init__(self, parent=None, name=None, label=''):
+    def __init__(self, parent=None, name=None, label=""):
         super(NodeBaseWidget, self).__init__(parent)
         self.setZValue(Z_VAL_NODE_WIDGET)
         self._name = name
@@ -64,8 +63,8 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
         self._node = None
 
     def setToolTip(self, tooltip):
-        tooltip = tooltip.replace('\n', '<br/>')
-        tooltip = '<b>{}</b><br/>{}'.format(self.name, tooltip)
+        tooltip = tooltip.replace("\n", "<br/>")
+        tooltip = "<b>{}</b><br/>{}".format(self.name, tooltip)
         super(NodeBaseWidget, self).setToolTip(tooltip)
 
     def on_value_changed(self, *args, **kwargs):
@@ -138,7 +137,7 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
             return
         if self.node:
             raise NodeWidgetError(
-                'Can\'t set property name widget already added to a Node'
+                "Can't set property name widget already added to a Node"
             )
         self._name = name
 
@@ -182,7 +181,7 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
             widget (QtWidgets.QWidget): custom.
         """
         if self.widget():
-            raise NodeWidgetError('Custom node widget already set.')
+            raise NodeWidgetError("Custom node widget already set.")
         group = _NodeGroupBox(self._label)
         group.add_node_widget(widget)
         self.setWidget(group)
@@ -196,7 +195,7 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
         """
         return self._label
 
-    def set_label(self, label=''):
+    def set_label(self, label=""):
         """
         Sets the label text above the embedded widget.
 
@@ -219,7 +218,7 @@ class NodeComboBox(NodeBaseWidget):
         :meth:`NodeGraphQt.BaseNode.add_combo_menu`
     """
 
-    def __init__(self, parent=None, name='', label='', items=None):
+    def __init__(self, parent=None, name="", label="", items=None):
         super(NodeComboBox, self).__init__(parent, name, label)
         self.setZValue(Z_VAL_NODE_WIDGET + 1)
         combo = QtWidgets.QComboBox()
@@ -235,13 +234,12 @@ class NodeComboBox(NodeBaseWidget):
 
     @property
     def type_(self):
-        return 'ComboNodeWidget'
+        return "ComboNodeWidget"
 
     def on_value_changed(self, *args, **kwargs):
-        super(NodeComboBox, self).on_value_changed( args, kwargs )
+        super(NodeComboBox, self).on_value_changed(args, kwargs)
         combo_widget = self.get_custom_widget()
-        combo_widget.setCurrentIndex( args[ 0 ] )
-
+        combo_widget.setCurrentIndex(args[0])
 
     def get_value(self):
         """
@@ -253,7 +251,7 @@ class NodeComboBox(NodeBaseWidget):
         combo_widget = self.get_custom_widget()
         return str(combo_widget.currentText())
 
-    def set_value(self, text=''):
+    def set_value(self, text=""):
         combo_widget = self.get_custom_widget()
         if type(text) is list:
             combo_widget.clear()
@@ -298,7 +296,7 @@ class NodeLineEdit(NodeBaseWidget):
         :meth:`NodeGraphQt.BaseNode.add_text_input`
     """
 
-    def __init__(self, parent=None, name='', label='', text='', validator=None):
+    def __init__(self, parent=None, name="", label="", text="", validator=None):
         super(NodeLineEdit, self).__init__(parent, name, label)
         ledit = QtWidgets.QLineEdit()
         ledit.setText(text)
@@ -307,7 +305,7 @@ class NodeLineEdit(NodeBaseWidget):
         ledit.editingFinished.connect(self.on_value_changed)
 
         if validator is not None:
-            ledit.setValidator( validator )
+            ledit.setValidator(validator)
 
         ledit.clearFocus()
         self.set_custom_widget(ledit)
@@ -315,7 +313,7 @@ class NodeLineEdit(NodeBaseWidget):
 
     @property
     def type_(self):
-        return 'LineEditNodeWidget'
+        return "LineEditNodeWidget"
 
     def get_value(self):
         """
@@ -326,7 +324,7 @@ class NodeLineEdit(NodeBaseWidget):
         """
         return str(self.get_custom_widget().text())
 
-    def set_value(self, text=''):
+    def set_value(self, text=""):
         if text != self.get_value():
             self.get_custom_widget().setText(text)
             self.on_value_changed()
@@ -343,7 +341,7 @@ class NodeFloatEdit(NodeBaseWidget):
         :meth:`NodeGraphQt.BaseNode.add_float_input`
     """
 
-    def __init__(self, parent=None, name='', label='', value=0.0):
+    def __init__(self, parent=None, name="", label="", value=0.0):
         super(NodeFloatEdit, self).__init__(parent, name, label)
         val_ledit = _ValueEdit()
         val_ledit.setStyleSheet(STYLE_QLINEEDIT)
@@ -356,7 +354,7 @@ class NodeFloatEdit(NodeBaseWidget):
 
     @property
     def type_(self):
-        return 'FloatEditNodeWidget'
+        return "FloatEditNodeWidget"
 
     def get_value(self):
         """
@@ -384,14 +382,14 @@ class NodeIntEdit(NodeFloatEdit):
         :meth:`NodeGraphQt.BaseNode.add_int_input`
     """
 
-    def __init__(self, parent=None, name='', label='', value=0):
+    def __init__(self, parent=None, name="", label="", value=0):
         super(NodeIntEdit, self).__init__(parent, name, label)
         self.get_custom_widget().set_data_type(int)
         self.get_custom_widget().setValue(value)
 
     @property
     def type_(self):
-        return 'IntEditNodeWidget'
+        return "IntEditNodeWidget"
 
 
 class NodeCheckBox(NodeBaseWidget):
@@ -405,7 +403,7 @@ class NodeCheckBox(NodeBaseWidget):
         :meth:`NodeGraphQt.BaseNode.add_checkbox`
     """
 
-    def __init__(self, parent=None, name='', label='', text='', state=False):
+    def __init__(self, parent=None, name="", label="", text="", state=False):
         super(NodeCheckBox, self).__init__(parent, name, label)
         _cbox = QtWidgets.QCheckBox(text)
         _cbox.setChecked(state)
@@ -421,7 +419,7 @@ class NodeCheckBox(NodeBaseWidget):
 
     @property
     def type_(self):
-        return 'CheckboxNodeWidget'
+        return "CheckboxNodeWidget"
 
     def get_value(self):
         """
@@ -448,7 +446,7 @@ class NodeFilePath(NodeLineEdit):
         :meth:`NodeGraphQt.BaseNode.add_file_input`
     """
 
-    def __init__(self, parent=None, name='', label='', text='', ext='*'):
+    def __init__(self, parent=None, name="", label="", text="", ext="*"):
         super(NodeLineEdit, self).__init__(parent, name, label)
         _ledit = QtWidgets.QLineEdit()
         _ledit.setStyleSheet(STYLE_QLINEEDIT)

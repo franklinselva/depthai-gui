@@ -1,6 +1,8 @@
 from Qt import QtCore, QtWidgets
-from NodeGraphQt.widgets.stylesheet import *
+
 from NodeGraphQt import BaseNode, NodeBaseWidget
+from NodeGraphQt.widgets.stylesheet import *
+
 
 class AddPortWidget(QtWidgets.QWidget):
     """
@@ -10,19 +12,19 @@ class AddPortWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(AddPortWidget, self).__init__(parent)
         self.combo_1 = QtWidgets.QComboBox()
-        self.btn_input = QtWidgets.QPushButton('< Add Input')
-        self.btn_output = QtWidgets.QPushButton('Add Output >')
+        self.btn_input = QtWidgets.QPushButton("< Add Input")
+        self.btn_output = QtWidgets.QPushButton("Add Output >")
 
         self.name_edit = QtWidgets.QLineEdit()
-        self.name_edit.setText('')
+        self.name_edit.setText("")
         self.name_edit.setStyleSheet(STYLE_QLINEEDIT)
         self.name_edit.setAlignment(QtCore.Qt.AlignCenter)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget( self.name_edit )
-        layout.addWidget( self.btn_input )
-        layout.addWidget( self.btn_output )
+        layout.addWidget(self.name_edit)
+        layout.addWidget(self.btn_input)
+        layout.addWidget(self.btn_output)
 
 
 class AddPortWidgetWrapper(NodeBaseWidget):
@@ -34,10 +36,10 @@ class AddPortWidgetWrapper(NodeBaseWidget):
         super(AddPortWidgetWrapper, self).__init__(parent)
 
         # set the name for node property.
-        self.set_name('my_widget')
+        self.set_name("my_widget")
 
         # set the label above the widget.
-        self.set_label('Custom Ports')
+        self.set_label("Custom Ports")
 
         # set the custom widget.
         self.set_custom_widget(AddPortWidget())
@@ -55,23 +57,25 @@ class AddPortWidgetWrapper(NodeBaseWidget):
     def on_btn_input_clicked(self):
         widget = self.get_custom_widget()
         port_name = widget.name_edit.text()
-        if not port_name: return
+        if not port_name:
+            return
 
         try:
-            self.node.add_input( port_name )
+            self.node.add_input(port_name)
         except:
-            print( "Input with name " + port_name + " already exists!" )
+            print("Input with name " + port_name + " already exists!")
 
     def on_btn_output_clicked(self):
         widget = self.get_custom_widget()
         port_name = widget.name_edit.text()
-        if not port_name: return
+        if not port_name:
+            return
 
         try:
-            self.node.add_output( port_name )
+            self.node.add_output(port_name)
         except:
-            print( "Output with name " + port_name + " already exists!" )
-        
+            print("Output with name " + port_name + " already exists!")
+
     def get_value(self):
         pass
 

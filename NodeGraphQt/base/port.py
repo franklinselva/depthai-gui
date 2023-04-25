@@ -1,11 +1,9 @@
 #!/usr/bin/python
-from NodeGraphQt.base.commands import (PortConnectedCmd,
-                       PortDisconnectedCmd,
-                       PortLockedCmd,
-                       PortUnlockedCmd,
-                       PortVisibleCmd,
-                       NodeInputConnectedCmd,
-                       NodeInputDisconnectedCmd)
+from NodeGraphQt.base.commands import (NodeInputConnectedCmd,
+                                       NodeInputDisconnectedCmd,
+                                       PortConnectedCmd, PortDisconnectedCmd,
+                                       PortLockedCmd, PortUnlockedCmd,
+                                       PortVisibleCmd)
 from NodeGraphQt.base.model import PortModel
 from NodeGraphQt.constants import IN_PORT, OUT_PORT
 from NodeGraphQt.errors import PortError
@@ -33,8 +31,7 @@ class Port(object):
 
     def __repr__(self):
         port = str(self.__class__.__name__)
-        return '<{}("{}") object at {}>'.format(
-            port, self.name(), hex(id(self)))
+        return '<{}("{}") object at {}>'.format(port, self.name(), hex(id(self)))
 
     @property
     def view(self):
@@ -113,9 +110,9 @@ class Port(object):
             visible (bool): true if visible.
         """
         self.model.visible = visible
-        label = 'show' if visible else 'hide'
+        label = "show" if visible else "hide"
         undo_stack = self.node().graph.undo_stack()
-        undo_stack.beginMacro('{} port {}'.format(label, self.name()))
+        undo_stack.beginMacro("{} port {}".format(label, self.name()))
 
         for port in self.connected_ports():
             undo_stack.push(PortDisconnectedCmd(self, port))
@@ -208,14 +205,13 @@ class Port(object):
 
         if self.locked() or port.locked():
             name = [p.name() for p in [self, port] if p.locked()][0]
-            raise PortError(
-                'Can\'t connect port because "{}" is locked.'.format(name))
+            raise PortError('Can\'t connect port because "{}" is locked.'.format(name))
 
         graph = self.node().graph
         viewer = graph.viewer()
 
         undo_stack = graph.undo_stack()
-        undo_stack.beginMacro('connect port')
+        undo_stack.beginMacro("connect port")
 
         pre_conn_port = None
         src_conn_ports = self.connected_ports()
@@ -266,10 +262,11 @@ class Port(object):
         if self.locked() or port.locked():
             name = [p.name() for p in [self, port] if p.locked()][0]
             raise PortError(
-                'Can\'t disconnect port because "{}" is locked.'.format(name))
+                'Can\'t disconnect port because "{}" is locked.'.format(name)
+            )
 
         graph = self.node().graph
-        graph.undo_stack().beginMacro('disconnect port')
+        graph.undo_stack().beginMacro("disconnect port")
         graph.undo_stack().push(PortDisconnectedCmd(self, port))
         graph.undo_stack().push(NodeInputDisconnectedCmd(self, port))
         graph.undo_stack().endMacro()

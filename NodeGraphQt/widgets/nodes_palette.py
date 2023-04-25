@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
 
-from Qt import QtWidgets, QtCore, QtGui
+from Qt import QtCore, QtGui, QtWidgets
 
 from NodeGraphQt.constants import URN_SCHEME
 
 
 class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
-
     def paint(self, painter, option, index):
         """
         Args:
@@ -30,7 +29,7 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
             option.rect.x() + sub_margin,
             option.rect.y() + sub_margin,
             option.rect.width() - (sub_margin * 2),
-            option.rect.height() - (sub_margin * 2)
+            option.rect.height() - (sub_margin * 2),
         )
 
         painter.save()
@@ -47,9 +46,9 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
         pen.setCapStyle(QtCore.Qt.RoundCap)
         painter.setPen(pen)
         painter.setBrush(QtGui.QBrush(bg_color))
-        painter.drawRoundRect(base_rect,
-                              int(base_rect.height()/radius),
-                              int(base_rect.width()/radius))
+        painter.drawRoundRect(
+            base_rect, int(base_rect.height() / radius), int(base_rect.width() / radius)
+        )
 
         pen_color = option.palette.midlight().color().darker(130)
         if option.state & QtWidgets.QStyle.State_Selected:
@@ -64,11 +63,11 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
             base_rect.x() + sub_margin,
             base_rect.y() + sub_margin,
             base_rect.width() - (sub_margin * 2),
-            base_rect.height() - (sub_margin * 2)
+            base_rect.height() - (sub_margin * 2),
         )
-        painter.drawRoundRect(sub_rect,
-                              int(sub_rect.height() / radius),
-                              int(sub_rect.width() / radius))
+        painter.drawRoundRect(
+            sub_rect, int(sub_rect.height() / radius), int(sub_rect.width() / radius)
+        )
 
         painter.setBrush(QtGui.QBrush(pen_color))
         edge_size = 2, sub_rect.height() - 6
@@ -77,9 +76,7 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
         pos_y = sub_rect.center().y() - (edge_size[1] / 2)
 
         for pos_x in [left_x, right_x]:
-            painter.drawRect(QtCore.QRectF(
-                pos_x, pos_y, edge_size[0], edge_size[1]
-            ))
+            painter.drawRect(QtCore.QRectF(pos_x, pos_y, edge_size[0], edge_size[1]))
 
         # painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtGui.QBrush(bg_color))
@@ -88,9 +85,7 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
         right_x = sub_rect.right() - (dot_size - 1)
         pos_y = sub_rect.center().y() - (dot_size / 2)
         for pos_x in [left_x, right_x]:
-            painter.drawEllipse(QtCore.QRectF(
-                pos_x, pos_y, dot_size, dot_size
-            ))
+            painter.drawEllipse(QtCore.QRectF(pos_x, pos_y, dot_size, dot_size))
             pos_x -= dot_size + 2
 
         # text
@@ -101,32 +96,31 @@ class NodesGridDelagate(QtWidgets.QStyledItemDelegate):
 
         font = painter.font()
         font_metrics = QtGui.QFontMetrics(font)
-        font_width = font_metrics.width(item.text().replace(' ', '_'))
+        font_width = font_metrics.width(item.text().replace(" ", "_"))
         font_height = font_metrics.height()
         text_rect = QtCore.QRectF(
             sub_rect.center().x() - (font_width / 2),
             sub_rect.center().y() - (font_height * 0.55),
-            font_width, font_height)
+            font_width,
+            font_height,
+        )
         painter.drawText(text_rect, item.text())
         painter.restore()
 
 
 class NodesGridProxyModel(QtCore.QSortFilterProxyModel):
-
     def __init__(self, parent=None):
         super(NodesGridProxyModel, self).__init__(parent)
-        
+
     def mimeData(self, indexes):
-        node_ids = ['node:{}'.format(i.data(QtCore.Qt.ToolTipRole))
-                    for i in indexes]
-        node_urn = URN_SCHEME + ';'.join(node_ids)
+        node_ids = ["node:{}".format(i.data(QtCore.Qt.ToolTipRole)) for i in indexes]
+        node_urn = URN_SCHEME + ";".join(node_ids)
         mime_data = super(NodesGridProxyModel, self).mimeData(indexes)
         mime_data.setUrls([node_urn])
         return mime_data
 
 
 class NodesGridView(QtWidgets.QListView):
-
     def __init__(self, parent=None):
         super(NodesGridView, self).__init__(parent)
         self.setSelectionMode(self.ExtendedSelection)
@@ -147,7 +141,7 @@ class NodesGridView(QtWidgets.QListView):
     def clear(self):
         self.model().sourceMode().clear()
 
-    def add_item(self, label, tooltip=''):
+    def add_item(self, label, tooltip=""):
         item = QtGui.QStandardItem(label)
         item.setSizeHint(QtCore.QSize(130, 40))
         item.setToolTip(tooltip)
@@ -156,10 +150,9 @@ class NodesGridView(QtWidgets.QListView):
 
 
 class NodesPaletteWidget(QtWidgets.QWidget):
-
     def __init__(self, parent=None, node_graph=None):
         super(NodesPaletteWidget, self).__init__(parent)
-        self.setWindowTitle('Nodes')
+        self.setWindowTitle("Nodes")
 
         self._category_tabs = {}
         self._custom_labels = {}
@@ -174,9 +167,7 @@ class NodesPaletteWidget(QtWidgets.QWidget):
         self._build_ui()
 
     def __repr__(self):
-        return '<{} object at {}>'.format(
-            self.__class__.__name__, hex(id(self))
-        )
+        return "<{} object at {}>".format(self.__class__.__name__, hex(id(self)))
 
     def _build_ui(self):
         """
@@ -186,7 +177,7 @@ class NodesPaletteWidget(QtWidgets.QWidget):
         node_types = defaultdict(list)
         for name, node_ids in self._factory.names.items():
             for nid in node_ids:
-                category = '.'.join(nid.split('.')[:-1])
+                category = ".".join(nid.split(".")[:-1])
                 categories.add(category)
                 node_types[category].append((nid, name))
 
@@ -230,9 +221,10 @@ class NodesPaletteWidget(QtWidgets.QWidget):
         """
         if label in self._custom_labels.values():
             labels = {v: k for k, v in self._custom_labels.items()}
-            raise ValueError('label "{}" already in use for "{}"'
-                             .format(label, labels[label]))
-        previous_label = self._custom_labels.get(category, '')
+            raise ValueError(
+                'label "{}" already in use for "{}"'.format(label, labels[label])
+            )
+        previous_label = self._custom_labels.get(category, "")
         for idx in range(self._tab_widget.count()):
             tab_text = self._tab_widget.tabText(idx)
             if tab_text in [category, previous_label]:
@@ -245,8 +237,3 @@ class NodesPaletteWidget(QtWidgets.QWidget):
         Update and refresh the node palette widget.
         """
         self._build_tree()
-
-
-
-
-

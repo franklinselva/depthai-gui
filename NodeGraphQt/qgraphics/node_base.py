@@ -1,19 +1,18 @@
 #!/usr/bin/python
 from collections import OrderedDict
 
-from Qt import QtGui, QtCore, QtWidgets
+from Qt import QtCore, QtGui, QtWidgets
 
+from NodeGraphQt.constants import (ICON_NODE_BASE, IN_PORT, ITEM_CACHE_MODE,
+                                   NODE_HEIGHT, NODE_ICON_SIZE,
+                                   NODE_SEL_BORDER_COLOR, NODE_SEL_COLOR,
+                                   NODE_WIDTH, OUT_PORT, PORT_FALLOFF,
+                                   Z_VAL_NODE)
+from NodeGraphQt.errors import NodeWidgetError
 from NodeGraphQt.qgraphics.node_abstract import AbstractNodeItem
 from NodeGraphQt.qgraphics.node_overlay_disabled import XDisabledItem
 from NodeGraphQt.qgraphics.node_text_item import NodeTextItem
-from NodeGraphQt.qgraphics.port import PortItem, CustomPortItem
-from NodeGraphQt.constants import (IN_PORT, OUT_PORT,
-                         NODE_WIDTH, NODE_HEIGHT,
-                         NODE_ICON_SIZE, ICON_NODE_BASE,
-                         NODE_SEL_COLOR, NODE_SEL_BORDER_COLOR,
-                         PORT_FALLOFF, Z_VAL_NODE,
-                         ITEM_CACHE_MODE)
-from NodeGraphQt.errors import NodeWidgetError
+from NodeGraphQt.qgraphics.port import CustomPortItem, PortItem
 
 
 class NodeItem(AbstractNodeItem):
@@ -25,17 +24,18 @@ class NodeItem(AbstractNodeItem):
         parent (QtWidgets.QGraphicsItem): parent item.
     """
 
-    def __init__(self, name='node', parent=None):
+    def __init__(self, name="node", parent=None):
         super(NodeItem, self).__init__(name, parent)
         pixmap = QtGui.QPixmap(ICON_NODE_BASE)
         if pixmap.size().height() > NODE_ICON_SIZE:
-            pixmap = pixmap.scaledToHeight(NODE_ICON_SIZE,
-                                           QtCore.Qt.SmoothTransformation)
-        self._properties['icon'] = ICON_NODE_BASE
+            pixmap = pixmap.scaledToHeight(
+                NODE_ICON_SIZE, QtCore.Qt.SmoothTransformation
+            )
+        self._properties["icon"] = ICON_NODE_BASE
         self._icon_item = QtWidgets.QGraphicsPixmapItem(pixmap, self)
         self._icon_item.setTransformationMode(QtCore.Qt.SmoothTransformation)
         self._text_item = NodeTextItem(self.name, self)
-        self._x_item = XDisabledItem(self, 'DISABLED')
+        self._x_item = XDisabledItem(self, "DISABLED")
         self._input_items = OrderedDict()
         self._output_items = OrderedDict()
         self._widgets = OrderedDict()
@@ -61,10 +61,12 @@ class NodeItem(AbstractNodeItem):
         # base background.
         margin = 1.0
         rect = self.boundingRect()
-        rect = QtCore.QRectF(rect.left() + margin,
-                             rect.top() + margin,
-                             rect.width() - (margin * 2),
-                             rect.height() - (margin * 2))
+        rect = QtCore.QRectF(
+            rect.left() + margin,
+            rect.top() + margin,
+            rect.width() - (margin * 2),
+            rect.height() - (margin * 2),
+        )
 
         radius = 4.0
         painter.setBrush(QtGui.QColor(*self.color))
@@ -78,10 +80,12 @@ class NodeItem(AbstractNodeItem):
         # node name background.
         padding = 3.0, 2.0
         text_rect = self._text_item.boundingRect()
-        text_rect = QtCore.QRectF(text_rect.x() + padding[0],
-                                  rect.y() + padding[1],
-                                  rect.width() - padding[0] - margin,
-                                  text_rect.height() - (padding[1] * 2))
+        text_rect = QtCore.QRectF(
+            text_rect.x() + padding[0],
+            rect.y() + padding[1],
+            rect.width() - padding[0] - margin,
+            text_rect.height() - (padding[1] * 2),
+        )
         painter.setBrush(QtGui.QColor(0, 0, 0, 50))
         if self.selected:
             painter.setBrush(QtGui.QColor(*NODE_SEL_COLOR))
@@ -93,8 +97,9 @@ class NodeItem(AbstractNodeItem):
         if self.selected:
             border_width = 1.2
             border_color = QtGui.QColor(*NODE_SEL_BORDER_COLOR)
-        border_rect = QtCore.QRectF(rect.left(), rect.top(),
-                                    rect.width(), rect.height())
+        border_rect = QtCore.QRectF(
+            rect.left(), rect.top(), rect.width(), rect.height()
+        )
 
         pen = QtGui.QPen(border_color, border_width)
         pen.setCosmetic(self.viewer().get_zoom() < 0.0)
@@ -183,10 +188,10 @@ class NodeItem(AbstractNodeItem):
         Args:
             state (bool): node disable state.
         """
-        tooltip = '<b>{}</b>'.format(self.name)
+        tooltip = "<b>{}</b>".format(self.name)
         if state:
             tooltip += ' <font color="red"><b>(DISABLED)</b></font>'
-        tooltip += '<br/>{}<br/>'.format(self.type_)
+        tooltip += "<br/>{}<br/>".format(self.type_)
         self.setToolTip(tooltip)
 
     def _set_base_size(self, add_w=0.0, add_h=0.0):
@@ -257,9 +262,7 @@ class NodeItem(AbstractNodeItem):
         height = self._text_item.boundingRect().height()
 
         if self._widgets:
-            wid_width = max([
-                w.boundingRect().width() for w in self._widgets.values()
-            ])
+            wid_width = max([w.boundingRect().width() for w in self._widgets.values()])
             if width < wid_width:
                 width = wid_width
 
@@ -338,8 +341,7 @@ class NodeItem(AbstractNodeItem):
         """
         if not self._widgets:
             return
-        wid_heights = sum(
-            [w.boundingRect().height() for w in self._widgets.values()])
+        wid_heights = sum([w.boundingRect().height() for w in self._widgets.values()])
         pos_y = self._height / 2
         pos_y -= wid_heights / 2
         pos_y += v_offset
@@ -457,10 +459,8 @@ class NodeItem(AbstractNodeItem):
             return
 
         rect = self.sceneBoundingRect()
-        l = self.viewer().mapToGlobal(
-            self.viewer().mapFromScene(rect.topLeft()))
-        r = self.viewer().mapToGlobal(
-            self.viewer().mapFromScene(rect.topRight()))
+        l = self.viewer().mapToGlobal(self.viewer().mapFromScene(rect.topLeft()))
+        r = self.viewer().mapToGlobal(self.viewer().mapFromScene(rect.topRight()))
         # width is the node width in screen
         width = r.x() - l.x()
 
@@ -499,16 +499,17 @@ class NodeItem(AbstractNodeItem):
 
     @property
     def icon(self):
-        return self._properties['icon']
+        return self._properties["icon"]
 
     @icon.setter
     def icon(self, path=None):
-        self._properties['icon'] = path
+        self._properties["icon"] = path
         path = path or ICON_NODE_BASE
         pixmap = QtGui.QPixmap(path)
         if pixmap.size().height() > NODE_ICON_SIZE:
-            pixmap = pixmap.scaledToHeight(NODE_ICON_SIZE,
-                                           QtCore.Qt.SmoothTransformation)
+            pixmap = pixmap.scaledToHeight(
+                NODE_ICON_SIZE, QtCore.Qt.SmoothTransformation
+            )
         self._icon_item.setPixmap(pixmap)
         if self.scene():
             self.post_init()
@@ -543,7 +544,7 @@ class NodeItem(AbstractNodeItem):
             self.highlight_pipes()
 
     @AbstractNodeItem.name.setter
-    def name(self, name=''):
+    def name(self, name=""):
         AbstractNodeItem.name.fset(self, name)
         if name == self._text_item.toPlainText():
             return
@@ -614,8 +615,14 @@ class NodeItem(AbstractNodeItem):
             self.post_init()
         return port
 
-    def add_input(self, name='input', multi_port=False, display_name=True,
-                  locked=False, painter_func=None):
+    def add_input(
+        self,
+        name="input",
+        multi_port=False,
+        display_name=True,
+        locked=False,
+        painter_func=None,
+    ):
         """
         Adds a port qgraphics item into the node with the "port_type" set as
         IN_PORT.
@@ -641,8 +648,14 @@ class NodeItem(AbstractNodeItem):
         port.locked = locked
         return self._add_port(port)
 
-    def add_output(self, name='output', multi_port=False, display_name=True,
-                   locked=False, painter_func=None):
+    def add_output(
+        self,
+        name="output",
+        multi_port=False,
+        display_name=True,
+        locked=False,
+        painter_func=None,
+    ):
         """
         Adds a port qgraphics item into the node with the "port_type" set as
         OUT_PORT.
@@ -740,7 +753,7 @@ class NodeItem(AbstractNodeItem):
 
     def from_dict(self, node_dict):
         super(NodeItem, self).from_dict(node_dict)
-        widgets = node_dict.pop('widgets', {})
+        widgets = node_dict.pop("widgets", {})
         for name, value in widgets.items():
             if self._widgets.get(name):
                 self._widgets[name].value = value
@@ -755,7 +768,7 @@ class NodeItemVertical(NodeItem):
         parent (QtWidgets.QGraphicsItem): parent item.
     """
 
-    def __init__(self, name='node', parent=None):
+    def __init__(self, name="node", parent=None):
         super(NodeItemVertical, self).__init__(name, parent)
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -780,10 +793,12 @@ class NodeItemVertical(NodeItem):
         # base background.
         margin = 1.0
         rect = self.boundingRect()
-        rect = QtCore.QRectF(rect.left() + margin,
-                             rect.top() + margin,
-                             rect.width() - (margin * 2),
-                             rect.height() - (margin * 2))
+        rect = QtCore.QRectF(
+            rect.left() + margin,
+            rect.top() + margin,
+            rect.width() - (margin * 2),
+            rect.height() - (margin * 2),
+        )
 
         radius = 4.0
         painter.setBrush(QtGui.QColor(*self.color))
@@ -801,8 +816,9 @@ class NodeItemVertical(NodeItem):
         if self.selected:
             painter.setBrush(QtGui.QColor(*NODE_SEL_COLOR))
         for y in [rect.y() + padding, rect.height() - height - 1]:
-            top_rect = QtCore.QRectF(rect.x() + padding, y,
-                                     rect.width() - (padding * 2), height)
+            top_rect = QtCore.QRectF(
+                rect.x() + padding, y, rect.width() - (padding * 2), height
+            )
             painter.drawRoundedRect(top_rect, 3.0, 3.0)
 
         # node border
@@ -811,8 +827,9 @@ class NodeItemVertical(NodeItem):
         if self.selected:
             border_width = 1.2
             border_color = QtGui.QColor(*NODE_SEL_BORDER_COLOR)
-        border_rect = QtCore.QRectF(rect.left(), rect.top(),
-                                    rect.width(), rect.height())
+        border_rect = QtCore.QRectF(
+            rect.left(), rect.top(), rect.width(), rect.height()
+        )
 
         pen = QtGui.QPen(border_color, border_width)
         pen.setCosmetic(self.viewer().get_zoom() < 0.0)
@@ -857,8 +874,8 @@ class NodeItemVertical(NodeItem):
         if inputs:
             port_width = inputs[0].boundingRect().width()
             port_height = inputs[0].boundingRect().height()
-            half_width = port_width/2
-            delta = self._width / (len(inputs)+1)
+            half_width = port_width / 2
+            delta = self._width / (len(inputs) + 1)
             port_x = delta
             port_y = (port_height / 2) * -1
             for port in inputs:
@@ -871,11 +888,11 @@ class NodeItemVertical(NodeItem):
             port_width = outputs[0].boundingRect().width()
             port_height = outputs[0].boundingRect().height()
             half_width = port_width / 2
-            delta = self._width / (len(outputs)+1)
+            delta = self._width / (len(outputs) + 1)
             port_x = delta
             port_y = self._height - (port_height / 2)
             for port in outputs:
-                port.setPos(port_x-half_width, port_y)
+                port.setPos(port_x - half_width, port_y)
                 port_x += delta
 
     def draw_node(self):
@@ -915,9 +932,7 @@ class NodeItemVertical(NodeItem):
         height = 0
 
         if self._widgets:
-            wid_width = max([
-                w.boundingRect().width() for w in self._widgets.values()
-            ])
+            wid_width = max([w.boundingRect().width() for w in self._widgets.values()])
             width = max(width, wid_width)
 
         port_width = 0.0
@@ -943,8 +958,14 @@ class NodeItemVertical(NodeItem):
         height += add_h
         return width, height
 
-    def add_input(self, name='input', multi_port=False, display_name=True,
-                  locked=False, painter_func=None):
+    def add_input(
+        self,
+        name="input",
+        multi_port=False,
+        display_name=True,
+        locked=False,
+        painter_func=None,
+    ):
         """
         Adds a port qgraphics item into the node with the "port_type" set as
         IN_PORT
@@ -960,10 +981,17 @@ class NodeItemVertical(NodeItem):
             PortItem: port qgraphics item.
         """
         return super(NodeItemVertical, self).add_input(
-            name, multi_port, False, locked, painter_func)
+            name, multi_port, False, locked, painter_func
+        )
 
-    def add_output(self, name='output', multi_port=False, display_name=True,
-                   locked=False, painter_func=None):
+    def add_output(
+        self,
+        name="output",
+        multi_port=False,
+        display_name=True,
+        locked=False,
+        painter_func=None,
+    ):
         """
         Adds a port qgraphics item into the node with the "port_type" set as
         OUT_PORT
@@ -979,4 +1007,5 @@ class NodeItemVertical(NodeItem):
             PortItem: port qgraphics item.
         """
         return super(NodeItemVertical, self).add_output(
-            name, multi_port, False, locked, painter_func)
+            name, multi_port, False, locked, painter_func
+        )
